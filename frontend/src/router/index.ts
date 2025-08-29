@@ -7,7 +7,15 @@ const routes: RouteRecordRaw[] = [
     name: 'home',
     component: () => import('@/views/IndexView.vue'),
     meta: { title: 'Home', layout: 'landing' }
-  }
+  },
+  {
+    path: '/error/:code',
+    alias: '/:pathMatch(.*)*',
+    name: 'error',
+    props: true,
+    component: () => import('@/views/ErrorView.vue'),
+    meta: { title: 'Error' }
+  },
 ];
 
 const router = createRouter({
