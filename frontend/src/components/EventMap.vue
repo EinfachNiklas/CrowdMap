@@ -23,7 +23,7 @@ const zoom = ref<number>(5);
         <l-map v-model:zoom="zoom" :center="center">
             <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 attribution="&copy; OpenStreetMap contributors" />
-            <l-marker v-for="markerPos in markerPositions" :lat-lng="markerPos" v-bind:key="markerPos.toString()" />
+            <l-marker v-for="(markerPos, i) in markerPositions" :lat-lng="markerPos" v-bind:key="i" />
         </l-map>
     </div>
 </template>
