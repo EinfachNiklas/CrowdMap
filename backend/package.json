@@ -2,12 +2,13 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "server.ts",
+  "main": "dist/server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc -p tsconfig.json && cp src/routes/openapi.yaml dist/routes/openapi.yaml",
-    "start": "node dist/server.js"
+    "build": "tsc -p tsconfig.json && shx cp src/routes/openapi.yaml dist/routes/openapi.yaml",
+    "start": "node dist/server.js",
+    "prestart": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -29,6 +30,7 @@
     "@types/express": "^5.0.3",
     "@types/node": "^24.3.0",
     "@types/swagger-ui-express": "^4.1.8",
-    "@types/yaml": "^1.9.6"
+    "@types/yaml": "^1.9.6",
+    "shx": "^0.4.0"
   }
 }
