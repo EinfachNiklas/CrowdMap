@@ -10,7 +10,7 @@ router.post("/users/", (req, res) => {
     if (!username || !email || !pwdhash) {
         return res.status(400).json({ message: 'missing fields', timestamp: new Date().toISOString() });
     }
-
+    
     try {
         const info = insert.run(username, email, pwdhash);
         return res.status(201).json({
