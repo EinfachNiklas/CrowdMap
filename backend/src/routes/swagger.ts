@@ -7,7 +7,15 @@ import swaggerUi from 'swagger-ui-express';
 
 const router = express.Router();
 
-const swaggerDocument = parse(readFileSync(path.join(__dirname,"openapi.yaml")).toString());
+const specPath = path.join(__dirname, 'openapi.yaml');
+let swaggerDocument: any;
+try {
+  const raw = readFileSync(specPath, 'utf8');
+  swaggerDocument = parse(raw);
+} catch (err) {
+  console.error(`Failed to read/parse OpenAPI spec at ${specPath}:`, err);
+  throw err;
+}
 
 router.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

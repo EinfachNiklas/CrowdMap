@@ -6,7 +6,6 @@ import swaggerRouter from './routes/swagger';
 const server = express();
 const port:number = 6060;
 server.use(express.json());
-
 server.use(cors());
 
 server.use("/", userRouter);
