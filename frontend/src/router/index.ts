@@ -5,6 +5,10 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
+    props: (route) => ({
+      overlayActive: route.query.overlayActive === 'true',
+      overlayType: typeof route.query.overlayType === 'string' ? route.query.overlayType : undefined
+    }),
     component: () => import('@/views/IndexView.vue'),
     meta: { title: 'Home', layout: 'landing' }
   },
@@ -15,7 +19,7 @@ const routes: RouteRecordRaw[] = [
     props: true,
     component: () => import('@/views/ErrorView.vue'),
     meta: { title: 'Error' }
-  },
+  }
 ];
 
 const router = createRouter({

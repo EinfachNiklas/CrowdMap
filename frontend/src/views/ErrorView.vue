@@ -14,7 +14,6 @@ const codeDict: Record<string, { httpStatusCode: number, notice: string }> = {
     "not-found": { httpStatusCode: 404, notice: "Ooops, you took a wrong turn. The page you are looking for does not exist." },
     "internal-server-error": { httpStatusCode: 500, notice: "Ooops, there seems to be something wrong!" },
 };
-
 let httpStatusCode: number;
 let notice: string;
 if (Object.keys(codeDict).includes(props.code)) {
