@@ -4,7 +4,7 @@ import userRouter from './routes/users';
 import swaggerRouter from './routes/swagger';
 
 const server = express();
-const port:number = 6060;
+const port: number = Number(process.env.PORT ?? 6060);
 server.use(express.json());
 server.use(cors());
 
