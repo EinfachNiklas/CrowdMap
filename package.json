@@ -15,7 +15,7 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start:frontend": "npm run preview --prefix frontend",
+    "start:frontend": "npm run dev --prefix frontend",
     "start:backend": "npm run start --prefix backend"
   }
 }

@@ -28,8 +28,7 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: env.VITE_BACKEND_ORIGIN || 'http://localhost:4000',
           changeOrigin: true,
-          // Falls dein Backend KEIN /api-Präfix hat, dann:
-          // rewrite: (path) => path.replace(/^\/api/, '')
+          rewrite: (p) => p.replace(/^\/api/, '')
         }
       }
     },
