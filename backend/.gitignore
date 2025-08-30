@@ -1,1 +1,4 @@
 node_modules/*
+dist/*
+data/
+src/db/app.db
