@@ -6,7 +6,7 @@ const router = express.Router();
 const insert = db.prepare("INSERT INTO users (username, email, pwdhash) VALUES (?,?,?)");
 
 router.post("/users/", (req, res) => {
-
+2
     const { username, email, pwd } = req.body ?? {};
     if (typeof username !== 'string' || typeof email !== 'string' || typeof pwd !== 'string') {
         return res.status(400).json({ message: 'invalid types', timestamp: new Date().toISOString() });
@@ -21,7 +21,7 @@ router.post("/users/", (req, res) => {
     }
 
     const saltRounds = 12;
-    const pwdhash = bcrypt.hash(pwd, saltRounds);
+    const pwdhash = bcrypt.hashSync(pwd, saltRounds);
 
     try {
         const info = insert.run(u, e, pwdhash);
@@ -34,7 +34,7 @@ router.post("/users/", (req, res) => {
         if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
             return res.status(409).json({ message: 'username or email already exists', timestamp: new Date().toISOString() });
         }
-        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString(), details: e.message });
     }
 });
 
