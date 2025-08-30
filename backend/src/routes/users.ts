@@ -1,16 +1,20 @@
 import express from 'express';
 import db from '../db/db';
+import bcrypt from 'bcrypt';
 
 const router = express.Router();
 
 router.post("/users/", (req, res) => {
     const insert = db.prepare("INSERT INTO users (username, email, pwdhash, createdAt) VALUES (?,?,?,CURRENT_TIMESTAMP)");
 
-    const { username, email, pwdhash } = req.body ?? {};
-    if (!username || !email || !pwdhash) {
+    const { username, email, pwd } = req.body ?? {};
+    if (!username || !email || !pwd) {
         return res.status(400).json({ message: 'missing fields', timestamp: new Date().toISOString() });
     }
     
+    const saltRounds = 12;
+    const pwdhash = bcrypt.hash(pwd,saltRounds);
+
     try {
         const info = insert.run(username, email, pwdhash);
         return res.status(201).json({
