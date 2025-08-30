@@ -1,0 +1,21 @@
+{
+  "name": "event-app",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/EinfachNiklas/event-app#readme",
+  "bugs": {
+    "url": "https://github.com/EinfachNiklas/event-app/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EinfachNiklas/event-app.git"
+  },
+  "license": "ISC",
+  "author": "EinfachNiklas",
+  "type": "commonjs",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:frontend": "npm run preview --prefix frontend",
+    "start:backend": "npm run start --prefix backend"
+  }
+}
