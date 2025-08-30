@@ -7,10 +7,12 @@ components:
     Message:
       type: object
       properties:
-        message: 
+        message:
           type: string
-        timestamp: 
+        timestamp:
           type: string
+          format: date-time
+      required: [message, timestamp]
     UsersPostBody:
       type: object
       properties:
@@ -18,26 +20,32 @@ components:
           type: string
         email:
           type: string
-        pwdhash:
+          format: email
+        pwd:
           type: string
+      required: [username, email, pwd]
+      additionalProperties: false
     User:
       type: object
       properties:
+        id:
+          type: integer
         username:
           type: string
         email:
           type: string
-        pwdhash:
+        createdAt:
           type: string
-        createdAt: 
-          type: string
+          format: date-time
+      required: [id, username, email, createdAt]
+      additionalProperties: falses
 
 paths:
   /users/:
     post:
       deprecated: false
       description: Creates new user
-      requestBody: 
+      requestBody:
         required: true
         content:
           application/json:
@@ -48,10 +56,10 @@ paths:
           description: User created successfully
           content:
             application/json:
-              schema: 
+              schema:
                 $ref: "#/components/schemas/User"
         "400":
-          description: Missing fields
+          description: Missing fields or invalid types
           content:
             application/json:
               schema:
@@ -68,4 +76,3 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
-
