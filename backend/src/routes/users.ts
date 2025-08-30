@@ -3,7 +3,7 @@ import db from '../db/db';
 import bcrypt from 'bcrypt';
 
 const router = express.Router();
-const insert = db.prepare("INSERT INTO users (username, email, pwdhash, createdAt) VALUES (?,?,?,CURRENT_TIMESTAMP)");
+const insert = db.prepare("INSERT INTO users (username, email, pwdhash) VALUES (?,?,?)");
 
 router.post("/users/", (req, res) => {
 
