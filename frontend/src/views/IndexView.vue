@@ -19,5 +19,5 @@ defineProps({
                 :marker-positions="[]" />
         </main>
     </div>
-    <Overlay v-if="overlayActive" ><SignInUpForm :type="overlayType"/></Overlay>
+    <Overlay v-if="overlayActive && (overlayType === 'signin' || overlayType === 'signup')" ><SignInUpForm :type="overlayType"/></Overlay>
 </template>
