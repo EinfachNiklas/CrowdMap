@@ -106,7 +106,7 @@ paths:
 
       responses:
         "200":
-          description: User found
+          description: Returned all found users
           content:
             application/json:
               schema:
@@ -140,7 +140,7 @@ paths:
 
       responses:
         "200":
-          description: no entry found
+          description: Entry found
           content:
             application/json:
               schema:

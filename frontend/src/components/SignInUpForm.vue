@@ -21,6 +21,7 @@ const username = ref<string>("");
 const email = ref<string>("");
 const pwd1 = ref<string>("");
 const pwd2 = ref<string>("");
+const loading = ref<boolean>(false);
 
 const notificationMessage = ref<string>("");
 const usernameIssue = ref<boolean>(false);
@@ -28,7 +29,6 @@ const emailIssue = ref<boolean>(false);
 const pwd1Issue = ref<boolean>(false);
 const pwd2Issue = ref<boolean>(false);
 
-let loading:boolean = false;
 
 const validateInput = () => {
     notificationMessage.value = "";
@@ -71,10 +71,10 @@ const validateInput = () => {
 }
 
 const createUser = async () => {
-    loading = true;
+    loading.value = true;
     const existingFields:string[] = [];
     if (!validateInput()){
-        loading = false;
+        loading.value = false;
         return;
     } 
 
@@ -89,7 +89,7 @@ const createUser = async () => {
 
         if (!searchRes.ok) {
             notificationMessage.value = "Something went wrong. Please try again.";
-            loading = false;
+            loading.value = false;
             return;
         }
 
@@ -106,7 +106,7 @@ const createUser = async () => {
         });
         if(usernameIssue.value || emailIssue.value){
             notificationMessage.value = `${existingFields[0]} ${existingFields.length>1 ? "and ".concat(existingFields[1]) : ""} already exist${existingFields.length==1 ? "s": ""}. Please try again.`;
-            loading = false;
+            loading.value = false;
             return;
         }
 
@@ -141,7 +141,7 @@ const createUser = async () => {
     } catch {
         notificationMessage.value = "Network error. Please check your connection and try again.";
     }
-    loading = false;
+    loading.value = false;
 }
 
 const signInUser = () => {

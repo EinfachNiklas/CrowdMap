@@ -40,8 +40,8 @@ router.post("/users/", (req, res) => {
 });
 
 router.get("/users/search/:id",(req, res)=>{
-    const id = parseInt(req.params.id);
-    if(isNaN(id)){
+    const id = Number(req.params.id);
+    if(!Number.isInteger(id)){
         return res.status(400).json({ message: 'invalid types', timestamp: new Date().toISOString() });
     }
     try {
