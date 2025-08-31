@@ -27,50 +27,50 @@ const pwd1Issue = ref<boolean>(false);
 const pwd2Issue = ref<boolean>(false);
 
 const validateInput = () => {
- notificationMessage.value = "";
- usernameIssue.value = false;
- emailIssue.value = false;
- pwd1Issue.value = false;
- pwd2Issue.value = false;
+    notificationMessage.value = "";
+    usernameIssue.value = false;
+    emailIssue.value = false;
+    pwd1Issue.value = false;
+    pwd2Issue.value = false;
 
- if (isSignUp.value) {
-   usernameIssue.value = !username.value;
-   emailIssue.value = !email.value;
-   pwd1Issue.value = !pwd1.value;
-   pwd2Issue.value = !pwd2.value;
-   if (usernameIssue.value || emailIssue.value || pwd1Issue.value || pwd2Issue.value) {
-     notificationMessage.value = "Please fill out all required fields";
-     return false;
-   }
- } else {
-   emailIssue.value = !email.value;
-   pwd1Issue.value = !pwd1.value;
-   if (emailIssue.value || pwd1Issue.value) {
-     notificationMessage.value = "Please fill out all required fields";
-     return false;
-   }
- }
+    if (isSignUp.value) {
+        usernameIssue.value = !username.value;
+        emailIssue.value = !email.value;
+        pwd1Issue.value = !pwd1.value;
+        pwd2Issue.value = !pwd2.value;
+        if (usernameIssue.value || emailIssue.value || pwd1Issue.value || pwd2Issue.value) {
+            notificationMessage.value = "Please fill out all required fields";
+            return false;
+        }
+    } else {
+        emailIssue.value = !email.value;
+        pwd1Issue.value = !pwd1.value;
+        if (emailIssue.value || pwd1Issue.value) {
+            notificationMessage.value = "Please fill out all required fields";
+            return false;
+        }
+    }
 
- if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
-   notificationMessage.value = "Please enter a valid email address";
-   emailIssue.value = true;
-   return false;
- }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+        notificationMessage.value = "Please enter a valid email address";
+        emailIssue.value = true;
+        return false;
+    }
 
- if (isSignUp.value && pwd1.value !== pwd2.value) {
-   notificationMessage.value = "Passwords don't match";
-   pwd1Issue.value = true;
-   pwd2Issue.value = true;
-   return false;
- }
- return true;
+    if (isSignUp.value && pwd1.value !== pwd2.value) {
+        notificationMessage.value = "Passwords don't match";
+        pwd1Issue.value = true;
+        pwd2Issue.value = true;
+        return false;
+    }
+    return true;
 }
 
 const createUser = () => {
-    if(!validateInput()){
+    if (!validateInput()) {
         return
     }
-    
+
     //implement custom username or email request
 
 
@@ -94,13 +94,16 @@ const createUser = () => {
                 notificationMessage.value = "Username or Email already exists";
                 break;
             default:
+                notificationMessage.value = "Something went wrong. Please try again.";
                 break;
         }
+    }).catch(() => {
+        notificationMessage.value = "Network error. Please check your connection and try again.";
     });
 }
 
 const signInUser = () => {
-    if(!validateInput()){
+    if (!validateInput()) {
         return
     }
 }
@@ -109,7 +112,8 @@ const signInUser = () => {
 
 <template>
     <h1 class="text-2xl text-center">{{ isSignUp ? "Sign Up" : "Sign In" }}</h1>
-    <form  @submit.prevent="isSignUp ? createUser() : signInUser()" class="m-auto flex flex-col w-150 h-fit mt-5 p-2 justify-around">
+    <form @submit.prevent="isSignUp ? createUser() : signInUser()"
+        class="m-auto flex flex-col w-150 h-fit mt-5 p-2 justify-around">
         <label v-if="isSignUp" for="username">Username *</label>
         <CustomInput v-if="isSignUp" @input="validateInput()" type="text" name="username" id="username"
             :issue="usernameIssue" v-model="username" />
