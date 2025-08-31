@@ -2,10 +2,11 @@
 import { defineProps, defineEmits } from 'vue';
 
 defineProps({
-  type: { type: String, default: 'text' },
-  placeholder: String,
-  name: String,
-  id: String,
+  type: { type: String, required: true, default: 'text' },
+  placeholder: { type: String, required: false },
+  name: { type: String, required: false },
+  id: { type: String, required: false },
+  issue: { type: Boolean, required: false },
   modelValue: { type: String, required: false }
 });
 
@@ -17,13 +18,6 @@ const onInput = (e: Event) => {
 </script>
 
 <template>
-  <input
-    class="border-b-1 rounded-xs border-gray-300 p-1 focus:outline-1 my-2"
-    :type="type"
-    :placeholder="placeholder"
-    :name="name"
-    :id="id"
-    :value="modelValue"
-    @input="onInput"
-  >
+  <input class="border-b-1 rounded-xs border-gray-300 p-1 focus:outline-1 my-2" :class="{ 'border-red-500': issue }"
+    :type="type" :placeholder="placeholder" :name="name" :id="id" :value="modelValue" @input="onInput">
 </template>

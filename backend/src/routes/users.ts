@@ -6,7 +6,6 @@ const router = express.Router();
 const insert = db.prepare("INSERT INTO users (username, email, pwdhash) VALUES (?,?,?)");
 
 router.post("/users/", (req, res) => {
-    console.log(req.body);
     const { username, email, pwd } = req.body ?? {};
     if (typeof username !== 'string' || typeof email !== 'string' || typeof pwd !== 'string') {
         return res.status(400).json({ message: 'invalid types', timestamp: new Date().toISOString() });
