@@ -85,44 +85,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
-  /users/search/{id}:
-    get:
-      tags: [Users]
-      deprecated: false
-      description: Retrieves user
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: User ID
-
-      responses:
-        "200":
-          description: no entry found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "400":
-          description: Invalid types
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
-        "404":
-          description: no entries found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
   /users/search:
     get:
       tags: [Users]
@@ -157,8 +119,40 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /users/search/{id}:
+    get:
+      tags: [Users]
+      deprecated: false
+      description: Retrieves user
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+
+      responses:
+        "200":
+          description: no entry found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid types
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         "404":
-          description: User not found
+          description: no entries found
           content:
             application/json:
               schema:

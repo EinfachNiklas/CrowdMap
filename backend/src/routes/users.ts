@@ -66,11 +66,8 @@ router.get("/users/search",(req, res)=>{
     }
     try {
         const rows = selectBySearch.all(u,e);
-        if(rows.length){
-            return res.status(200).json(rows);
-        }else{
-            return res.status(404).json({ message: 'no entries found', timestamp: new Date().toISOString() });
-        }
+        return res.status(200).json(rows);
+        
     } catch (e: any) {
         return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString(), details: e.message });
     }
