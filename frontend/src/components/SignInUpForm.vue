@@ -27,41 +27,50 @@ const pwd1Issue = ref<boolean>(false);
 const pwd2Issue = ref<boolean>(false);
 
 const validateInput = () => {
-    notificationMessage.value = "";
+ notificationMessage.value = "";
+ usernameIssue.value = false;
+ emailIssue.value = false;
+ pwd1Issue.value = false;
+ pwd2Issue.value = false;
 
-    usernameIssue.value = (username.value === "");
-    emailIssue.value = (email.value === "");
-    pwd1Issue.value = (pwd1.value === "");
-    pwd2Issue.value = (pwd2.value === "");
-    if (username.value === "" || email.value === "" || pwd1.value === "" || pwd2.value === "") {
-        notificationMessage.value = "Please fill out all required fields";
-        return;
-    }
+ if (isSignUp.value) {
+   usernameIssue.value = !username.value;
+   emailIssue.value = !email.value;
+   pwd1Issue.value = !pwd1.value;
+   pwd2Issue.value = !pwd2.value;
+   if (usernameIssue.value || emailIssue.value || pwd1Issue.value || pwd2Issue.value) {
+     notificationMessage.value = "Please fill out all required fields";
+     return false;
+   }
+ } else {
+   emailIssue.value = !email.value;
+   pwd1Issue.value = !pwd1.value;
+   if (emailIssue.value || pwd1Issue.value) {
+     notificationMessage.value = "Please fill out all required fields";
+     return false;
+   }
+ }
 
+ if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) {
+   notificationMessage.value = "Please enter a valid email address";
+   emailIssue.value = true;
+   return false;
+ }
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value) && notificationMessage.value === "") {
-        notificationMessage.value = "Please enter a valid Email-Adress";
-        emailIssue.value = true;
-        return;
-    }
-
-    if (pwd1.value !== pwd2.value && notificationMessage.value === "") {
-        notificationMessage.value = "Passwords don't match";
-        pwd1Issue.value = true;
-        pwd2Issue.value = true;
-        return;
-    }
-
-    if (notificationMessage.value !== "") {
-        notificationMessage.value = "";
-    }
+ if (isSignUp.value && pwd1.value !== pwd2.value) {
+   notificationMessage.value = "Passwords don't match";
+   pwd1Issue.value = true;
+   pwd2Issue.value = true;
+   return false;
+ }
+ return true;
 }
 
 const createUser = () => {
-    validateInput();
-    if(notificationMessage.value!==""){
-        return;
+    if(!validateInput()){
+        return
     }
+    
     //implement custom username or email request
 
 
@@ -91,7 +100,9 @@ const createUser = () => {
 }
 
 const signInUser = () => {
-
+    if(!validateInput()){
+        return
+    }
 }
 
 </script>
