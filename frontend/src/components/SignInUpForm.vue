@@ -98,7 +98,7 @@ const signInUser = () => {
 
 <template>
     <h1 class="text-2xl text-center">{{ isSignUp ? "Sign Up" : "Sign In" }}</h1>
-    <form class="m-auto flex flex-col w-150 h-fit mt-5 p-2 justify-around">
+    <form  @submit.prevent="isSignUp ? createUser() : signInUser()" class="m-auto flex flex-col w-150 h-fit mt-5 p-2 justify-around">
         <label v-if="isSignUp" for="username">Username *</label>
         <CustomInput v-if="isSignUp" @input="validateInput()" type="text" name="username" id="username"
             :issue="usernameIssue" v-model="username" />
@@ -113,7 +113,7 @@ const signInUser = () => {
         <p v-if="notificationMessage" @input="validateInput()" class="text-center text-red-400 mt-5">{{
             notificationMessage }}</p>
         <div class="flex justify-center mt-5">
-            <CustomButton @click="isSignUp ? createUser() : signInUser()">Submit</CustomButton>
+            <CustomButton>Submit</CustomButton>
         </div>
     </form>
 </template>
