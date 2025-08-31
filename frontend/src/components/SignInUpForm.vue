@@ -20,11 +20,11 @@ const email = ref<string>("");
 const pwd1 = ref<string>("");
 const pwd2 = ref<string>("");
 
-let notificationMessage = ref<string>("");
-let usernameIssue = ref<boolean>(false);
-let emailIssue = ref<boolean>(false);
-let pwd1Issue = ref<boolean>(false);
-let pwd2Issue = ref<boolean>(false);
+const notificationMessage = ref<string>("");
+const usernameIssue = ref<boolean>(false);
+const emailIssue = ref<boolean>(false);
+const pwd1Issue = ref<boolean>(false);
+const pwd2Issue = ref<boolean>(false);
 
 const validateInput = () => {
     notificationMessage.value = "";

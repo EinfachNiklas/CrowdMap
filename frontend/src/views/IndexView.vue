@@ -2,7 +2,7 @@
 import HeaderBar from '@/components/HeaderBar.vue';
 import EventMap from '@/components/EventMap.vue';
 import SignInUpForm from '@/components/SignInUpForm.vue';
-import Overlay from '@/components/Overlay.vue';
+import Overlay from '@/components/OverlayField.vue';
 
 defineProps({
     overlayActive: {type: Boolean, required: false, default: false},
