@@ -85,7 +85,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
-  /users/{id}:
+  /users/search/{id}:
     get:
       tags: [Users]
       deprecated: false
@@ -100,13 +100,19 @@ paths:
 
       responses:
         "200":
-          description: User found
+          description: no entry found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        "400":
+          description: Invalid types
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         "404":
-          description: User not found
+          description: no entries found
           content:
             application/json:
               schema:
@@ -142,9 +148,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
         "400":
-          description: No querys provided
+          description: No query provided
           content:
             application/json:
               schema:
