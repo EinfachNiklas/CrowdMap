@@ -5,10 +5,12 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'home',
-    props: (route) => ({
-      overlayActive: route.query.overlayActive === 'true',
-      overlayType: typeof route.query.overlayType === 'string' ? route.query.overlayType : undefined
-    }),
+    props: (route) => {
+      const raw = typeof route.query.overlayType === 'string' ? route.query.overlayType : undefined;
+      const type = raw === 'signin' || raw === 'signup' ? raw : undefined;
+      const active = route.query.overlayActive === 'true' && !!type;
+      return { overlayActive: active, overlayType: type };
+    },
     component: () => import('@/views/IndexView.vue'),
     meta: { title: 'Home', layout: 'landing' }
   },
