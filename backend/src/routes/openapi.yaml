@@ -43,8 +43,9 @@ components:
       additionalProperties: false
 
 paths:
-  /users/:
+  /users:
     post:
+      tags: [Users]
       deprecated: false
       description: Creates new user
       requestBody:
@@ -56,6 +57,12 @@ paths:
       responses:
         "201":
           description: User created successfully
+          headers:
+            Location:
+              description: URL of created user
+              schema:
+                type: string
+                format: uri
           content:
             application/json:
               schema:
@@ -68,6 +75,82 @@ paths:
                 $ref: "#/components/schemas/Message"
         "409":
           description: Username or Email already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /users/{id}:
+    get:
+      tags: [Users]
+      deprecated: false
+      description: Retrieves user
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /users/search:
+    get:
+      tags: [Users]
+      deprecated: false
+      description: Retrieves user from search input
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
+          required: false
+          description: username query
+        - in: query
+          name: email
+          schema:
+            type: string
+          required: false
+          description: email query
+
+      responses:
+        "200":
+          description: User found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "400":
+          description: No querys provided
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "404":
+          description: User not found
           content:
             application/json:
               schema:
