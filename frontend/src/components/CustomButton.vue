@@ -11,7 +11,7 @@ defineProps({
 
 <template>
     <button :type="type" :disabled="disabled" class=" text-white w-fit py-1.5 px-3 border-0 transition-all"
-        :class="[rounded && 'rounded-[50px]', rounded && !disabled && 'hover:rounded-xl', disabled ? '!bg-gray-400' : 'bg-purple-800 cursor-pointer hover:bg-purple-700']">
+        :class="[rounded && 'rounded-[50px]', rounded && !disabled && 'hover:rounded-xl', disabled ? '!bg-gray-400 cursor-not-allowed pointer-events-none' : 'bg-purple-800 cursor-pointer hover:bg-purple-700']">
         <slot />
     </button>
 </template>

@@ -72,11 +72,11 @@ const validateInput = () => {
 
 const createUser = async () => {
     loading.value = true;
-    const existingFields:string[] = [];
-    if (!validateInput()){
+    const existingFields = new Set<string>();
+    if (!validateInput()) {
         loading.value = false;
         return;
-    } 
+    }
 
     try {
         const params = new URLSearchParams({
@@ -97,16 +97,16 @@ const createUser = async () => {
         searchData.forEach((entry: { username: string; email: string; }) => {
             if (entry.username === username.value) {
                 usernameIssue.value = true;
-                existingFields.push("Username");
+                existingFields.add("Username");
             }
             if (entry.email === email.value) {
                 emailIssue.value = true;
-                existingFields.push("Email");
+                existingFields.add("Email");
             }
         });
-        if(usernameIssue.value || emailIssue.value){
-            notificationMessage.value = `${existingFields[0]} ${existingFields.length>1 ? "and ".concat(existingFields[1]) : ""} already exist${existingFields.length==1 ? "s": ""}. Please try again.`;
-            loading.value = false;
+        if (usernameIssue.value || emailIssue.value) {
+            const existingFieldsArray = Array.from(existingFields);
+            notificationMessage.value = `${existingFieldsArray.join(" and ")} already ${existingFieldsArray.length === 1 ? "exists" : "exist"}. Please try again.`; loading.value = false;
             return;
         }
 
@@ -122,10 +122,10 @@ const createUser = async () => {
 
         switch (createRes.status) {
             case 201:
-                username.value="";
-                email.value="";
-                pwd1.value="";
-                pwd2.value="";
+                username.value = "";
+                email.value = "";
+                pwd1.value = "";
+                pwd2.value = "";
                 await router.push({ name: 'home', query: { overlayActive: 'true', overlayType: 'signin' } });
                 break;
             case 400:
@@ -167,10 +167,10 @@ const signInUser = () => {
         <label v-if="isSignUp" for="pwd2">Password again *</label>
         <CustomInput v-if="isSignUp" @input="validateInput()" type="password" name="pwd2" id="pwd2" :issue="pwd2Issue"
             v-model="pwd2" />
-        <p v-if="notificationMessage" @input="validateInput()" class="text-center text-red-400 mt-5">{{
+        <p v-if="notificationMessage" class="text-center text-red-400 mt-5">{{
             notificationMessage }}</p>
         <div class="flex justify-center mt-5">
-            <CustomButton :disabled="loading" type="submit">{{loading ? "Loading" :"Submit"}}</CustomButton>
+            <CustomButton :disabled="loading" type="submit">{{ loading ? "Loading" : "Submit" }}</CustomButton>
         </div>
     </form>
 </template>

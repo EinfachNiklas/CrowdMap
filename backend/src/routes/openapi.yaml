@@ -89,7 +89,7 @@ paths:
     get:
       tags: [Users]
       deprecated: false
-      description: Retrieves user from search input
+      description: Retrieves users matching username and/or email
       parameters:
         - in: query
           name: username
@@ -129,7 +129,7 @@ paths:
     get:
       tags: [Users]
       deprecated: false
-      description: Retrieves user
+      description: Retrieves user by id
       parameters:
         - in: path
           name: id
