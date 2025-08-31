@@ -79,11 +79,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
-  /users/:id:
+  /users/{id}:
     get:
       tags: [Users]
       deprecated: false
       description: Retrieves user
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+
       responses:
         "200":
           description: User found
