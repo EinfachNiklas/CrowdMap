@@ -85,43 +85,11 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
-  /users/{id}:
-    get:
-      tags: [Users]
-      deprecated: false
-      description: Retrieves user
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: User ID
-
-      responses:
-        "200":
-          description: User found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User"
-        "404":
-          description: User not found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
-        "500":
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
   /users/search:
     get:
       tags: [Users]
       deprecated: false
-      description: Retrieves user from search input
+      description: Retrieves users matching username and/or email
       parameters:
         - in: query
           name: username
@@ -138,19 +106,53 @@ paths:
 
       responses:
         "200":
-          description: User found
+          description: Returned all found users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+        "400":
+          description: No query provided
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /users/search/{id}:
+    get:
+      tags: [Users]
+      deprecated: false
+      description: Retrieves user by id
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: User ID
+
+      responses:
+        "200":
+          description: Entry found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
         "400":
-          description: No querys provided
+          description: Invalid types
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
         "404":
-          description: User not found
+          description: no entries found
           content:
             application/json:
               schema:

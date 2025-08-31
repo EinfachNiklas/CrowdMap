@@ -4,6 +4,8 @@ import bcrypt from 'bcrypt';
 
 const router = express.Router();
 const insert = db.prepare("INSERT INTO users (username, email, pwdhash) VALUES (?,?,?)");
+const selectByID = db.prepare("SELECT id, username, email, createdAt FROM users WHERE id = ?");
+const selectBySearch = db.prepare("SELECT id, username, email, createdAt FROM users WHERE username = ? OR email = ?");
 
 router.post("/users/", (req, res) => {
     const { username, email, pwd } = req.body ?? {};
@@ -27,7 +29,7 @@ router.post("/users/", (req, res) => {
         const id = Number(info.lastInsertRowid);
         return res
             .status(201)
-            .location(`/users/${id}`)
+            .location(`/users/search/${id}`)
             .json({ id, username: u, email: e, createdAt: new Date().toISOString() });
     } catch (e: any) {
         if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
@@ -35,6 +37,41 @@ router.post("/users/", (req, res) => {
         }
         return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString(), details: e.message });
     }
+});
+
+router.get("/users/search/:id",(req, res)=>{
+    const id = Number(req.params.id);
+    if(!Number.isInteger(id)){
+        return res.status(400).json({ message: 'invalid types', timestamp: new Date().toISOString() });
+    }
+    try {
+        const row = selectByID.get(id);
+        if(row){
+            return res.status(200).json(row);
+        }else{
+            return res.status(404).json({ message: 'no entry found', timestamp: new Date().toISOString() });
+        }
+    } catch (e: any) {
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString(), details: e.message });
+    }
+ 
+});
+
+router.get("/users/search",(req, res)=>{
+    let { username, email } = req.query ?? {};
+    const u = username ? (username as string).trim() : null;
+    const e = email ? (email as string).trim() : null;
+    if (!u && !e) {
+        return res.status(400).json({ message: 'no query provided', timestamp: new Date().toISOString() });
+    }
+    try {
+        const rows = selectBySearch.all(u,e);
+        return res.status(200).json(rows);
+        
+    } catch (e: any) {
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString(), details: e.message });
+    }
+ 
 });
 
 
