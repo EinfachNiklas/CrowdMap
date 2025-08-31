@@ -1,7 +1,5 @@
 <template>
-    <div class="fixed inset-0 z-30 grid place-items-center p-4 ">
-        <div class="rounded-2xl w-fit bg-gray-700 text-white p-5 shadow-md shadow-gray-700 transition-all" role="dialog" aria-modal="true">
-            <slot />
-        </div>
+    <div class="absolute rounded-2xl left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-fit bg-gray-700 text-white p-5 shadow-md shadow-current transition-all ">
+        <slot />
     </div>
 </template>
