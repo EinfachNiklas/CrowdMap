@@ -15,6 +15,8 @@ if (!["signup", "signin"].includes(props.type)) {
 }
 const isSignUp = computed(() => props.type === 'signup')
 
+
+
 const username = ref<string>("");
 const email = ref<string>("");
 const pwd1 = ref<string>("");
@@ -25,6 +27,8 @@ const usernameIssue = ref<boolean>(false);
 const emailIssue = ref<boolean>(false);
 const pwd1Issue = ref<boolean>(false);
 const pwd2Issue = ref<boolean>(false);
+
+let loading:boolean = false;
 
 const validateInput = () => {
     notificationMessage.value = "";
@@ -66,26 +70,63 @@ const validateInput = () => {
     return true;
 }
 
-const createUser = () => {
-    if (!validateInput()) {
-        return
-    }
+const createUser = async () => {
+    loading = true;
+    const existingFields:string[] = [];
+    if (!validateInput()){
+        loading = false;
+        return;
+    } 
 
-    //implement custom username or email request
-
-
-    fetch("/api/users", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+    try {
+        const params = new URLSearchParams({
             username: username.value,
-            email: email.value,
-            pwd: pwd1.value
-        })
-    }).then((res) => {
-        switch (res.status) {
+            email: email.value
+        });
+        const searchRes = await fetch(`/api/users/search?${params.toString()}`, {
+            method: 'GET'
+        });
+
+        if (!searchRes.ok) {
+            notificationMessage.value = "Something went wrong. Please try again.";
+            loading = false;
+            return;
+        }
+
+        const searchData = await searchRes.json();
+        searchData.forEach((entry: { username: string; email: string; }) => {
+            if (entry.username === username.value) {
+                usernameIssue.value = true;
+                existingFields.push("Username");
+            }
+            if (entry.email === email.value) {
+                emailIssue.value = true;
+                existingFields.push("Email");
+            }
+        });
+        if(usernameIssue.value || emailIssue.value){
+            notificationMessage.value = `${existingFields[0]} ${existingFields.length>1 ? "and ".concat(existingFields[1]) : ""} already exist${existingFields.length==1 ? "s": ""}. Please try again.`;
+            loading = false;
+            return;
+        }
+
+        const createRes = await fetch("/api/users", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: username.value,
+                email: email.value,
+                pwd: pwd1.value
+            })
+        });
+
+        switch (createRes.status) {
             case 201:
-                router.push({ name: 'home', query: { overlayActive: 'true', overlayType: 'signin' } });
+                username.value="";
+                email.value="";
+                pwd1.value="";
+                pwd2.value="";
+                await router.push({ name: 'home', query: { overlayActive: 'true', overlayType: 'signin' } });
                 break;
             case 400:
                 notificationMessage.value = "Please fill out all required fields";
@@ -97,9 +138,10 @@ const createUser = () => {
                 notificationMessage.value = "Something went wrong. Please try again.";
                 break;
         }
-    }).catch(() => {
+    } catch {
         notificationMessage.value = "Network error. Please check your connection and try again.";
-    });
+    }
+    loading = false;
 }
 
 const signInUser = () => {
@@ -128,7 +170,7 @@ const signInUser = () => {
         <p v-if="notificationMessage" @input="validateInput()" class="text-center text-red-400 mt-5">{{
             notificationMessage }}</p>
         <div class="flex justify-center mt-5">
-            <CustomButton>Submit</CustomButton>
+            <CustomButton :disabled="loading" type="submit">{{loading ? "Loading" :"Submit"}}</CustomButton>
         </div>
     </form>
 </template>
