@@ -20,7 +20,7 @@ router.post("/users/", (req, res) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) {
         return res.status(400).json({ message: 'invalid email', timestamp: new Date().toISOString() });
     }
-
+    
     const saltRounds = 12;
     const pwdhash = bcrypt.hashSync(pwd, saltRounds);
 

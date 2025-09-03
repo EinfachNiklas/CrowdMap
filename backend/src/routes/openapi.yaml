@@ -41,6 +41,23 @@ components:
           format: date-time
       required: [id, username, email, createdAt]
       additionalProperties: false
+    AuthLoginPostBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        pwd:
+          type: string
+      required: [email, pwd]
+      additionalProperties: false
+    AuthToken:
+      type: object
+      properties:
+        authToken:
+          type: string
+      required: [authToken]
+      additionalProperties: false
 
 paths:
   /users:
@@ -153,6 +170,48 @@ paths:
                 $ref: "#/components/schemas/Message"
         "404":
           description: no entries found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /auth/login:
+    post:
+      tags: [Auth]
+      deprecated: false
+      description: Authenticates user, sets refresh cookie and returns auth token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthLoginPostBody"
+      responses:
+        "200":
+          description: Successfully authenticated
+          headers:
+            Set-Cookie:
+              description: HTTP-only refresh token cookie; path is `/api/auth/refresh`. May be `Secure` in production.
+              schema:
+                type: string
+                example: refresh=eyJ...; Path=/api/auth/refresh; HttpOnly; Secure
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthToken"
+        "400":
+          description: Missing fields or invalid types
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:

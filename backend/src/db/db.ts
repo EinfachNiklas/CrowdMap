@@ -16,5 +16,14 @@ db.exec(`
         createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
     )
     `);
+db.exec(`
+    CREATE TABLE IF NOT EXISTS refreshTokenSessions (
+        userId INTEGER PRIMARY KEY NOT NULL,
+        jtiHash VARCHAR(255) NOT NULL,
+        ttl VARCHAR(255) NOT NULL,
+        createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(userId) REFERENCES users(id)
+    )
+    `);
 
 export default db;
