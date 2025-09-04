@@ -2,7 +2,18 @@ openapi: 3.1.0
 info:
   title: event-app-api
   version: 1.0.0
+security:
+  - AccessTokenAuth: []
 components:
+  securitySchemes:
+    AccessTokenAuth:
+      type: http
+      scheme: Bearer
+      bearerFormat: JWT
+    refreshTokenCookieAuth:
+      type: apiKey
+      in: cookie
+      name: refresh
   schemas:
     Message:
       type: object
@@ -65,6 +76,7 @@ paths:
       tags: [Users]
       deprecated: false
       description: Creates new user
+      security: []
       requestBody:
         required: true
         content:
@@ -136,6 +148,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         "500":
           description: Internal server error
           content:
@@ -168,6 +186,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         "404":
           description: no entries found
           content:
@@ -185,6 +209,7 @@ paths:
       tags: [Auth]
       deprecated: false
       description: Authenticates user, sets refresh cookie and returns auth token
+      security: []
       requestBody:
         required: true
         content:
@@ -218,6 +243,31 @@ paths:
                 $ref: "#/components/schemas/Message"
         "500":
           description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      deprecated: false
+      description: Issues new auth token and sets a new refresh cookie
+      security:
+        - refreshTokenCookieAuth: []
+      responses:
+        "200":
+          description: Successfully issued new auth token
+          headers:
+            Set-Cookie:
+              description: HTTP-only refresh token cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthToken"
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:

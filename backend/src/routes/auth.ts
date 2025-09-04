@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import type { StringValue } from 'ms';
 import bcrypt from 'bcrypt';
 import db from '../db/db';
+import authentication from '../authentication';
 
 
 const router = express.Router();
@@ -10,8 +11,13 @@ const jwtSecret: string = process.env.JWT_SECRET!;
 const authTtl: string = process.env.AUTH_TOKEN_TTL || "10m";
 const refreshTtl: string = process.env.REFRESH_TOKEN_TTL || "7d";
 
+const saltRounds: number = 12;
+
 const getUserIdAndPwdHashStmt = db.prepare("SELECT id, pwdhash FROM users WHERE email = ?");
 const insertRefreshTokenSession = db.prepare("INSERT INTO refreshTokenSessions (userId, jtiHash, ttl) VALUES (?,?,?)");
+const getRefreshTokenSession = db.prepare("SELECT jtiHash FROM refreshTokenSessions WHERE userId = ?");
+const deleteRefreshTokenSession = db.prepare("DELETE FROM refreshTokenSessions WHERE userId = ?");
+
 
 function signAuthToken(sub: string) {
     return jwt.sign({ id: sub }, jwtSecret, { expiresIn: authTtl as StringValue });
@@ -25,7 +31,7 @@ function setRefreshCookie(res: express.Response, token: string) {
     res.cookie("refresh", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
-        path: "/api/auth/refresh",
+        path: "/auth/refresh",
     });
 }
 
@@ -49,7 +55,6 @@ router.post("/auth/login", (req, res) => {
         const jti: string = crypto.randomUUID();
         const authToken: string = signAuthToken(row.id.toString());
         const refreshToken: string = signRefreshToken(row.id.toString(), jti);
-        const saltRounds: number = 12;
         insertRefreshTokenSession.run(row.id, bcrypt.hashSync(jti, saltRounds), refreshTtl);
         setRefreshCookie(res, refreshToken);
         return res.status(200).json({ authToken: authToken });
@@ -58,5 +63,32 @@ router.post("/auth/login", (req, res) => {
     }
 });
 
+router.post("/auth/refresh", (req, res) => {
+    const token = req.cookies?.refresh as string | undefined;
+    if (!token) {
+        return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
+    }
+    try {
+        const payload = jwt.verify(token, jwtSecret) as { id: string, jti: string };
+        const userId = payload.id;
+        const row = getRefreshTokenSession.get(userId) as { jtiHash: string };
+        if (!row) {
+            return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
+        }
+        if (!bcrypt.compareSync(payload.jti, row.jtiHash)) {
+            return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
+        }
+        //ToDo: Delete from DB aka invalidate session if refreshToken after TTL
+        deleteRefreshTokenSession.run(userId);
+        const newJti = crypto.randomUUID();
+        const authToken: string = signAuthToken(userId.toString());
+        const refreshToken: string = signRefreshToken(userId, newJti);
+        insertRefreshTokenSession.run(userId, bcrypt.hashSync(newJti, saltRounds), refreshTtl);
+        setRefreshCookie(res, refreshToken);
+        return res.status(200).json({ authToken: authToken });
+    } catch (error) {
+        return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
+    }
+});
 
 export default router;
