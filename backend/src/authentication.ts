@@ -1,27 +1,43 @@
-import jwt from 'jsonwebtoken';
+import { NextFunction, Request, Response } from 'express';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
-const jwtSecret: string = process.env.JWT_SECRET!;
+const jwtSecret: string = process.env.JWT_SECRET as string;
+if (!jwtSecret) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
 
-export default class authentication {
+export default class Authentication {
 
-  static authenticate(req: any, res: any, next: any) {
-    if ([
-      "/auth/login",
-      "/auth/refresh",
-      "/users", // ToDo: only post
-      ...process.env.NODE_ENV !== "production" ? ["/api-docs/*"] : []
-    ].some(path => path === req.path || (path.endsWith("/*") && req.path.startsWith(path.slice(0,-1))))){
-      return next();
+  static authenticate(req: Request, res: Response, next: NextFunction) {
+    if (req.method === 'OPTIONS') return next();
+    const isPublic =
+      (req.path === '/users' && req.method === 'POST') ||
+      req.path === '/auth/login' ||
+      req.path === '/auth/refresh' ||
+      (process.env.NODE_ENV !== 'production' &&
+        (req.path === '/api-docs' || req.path.startsWith('/api-docs/')));
+
+    if (isPublic) return next();
+    const h = req.headers.authorization ?? "";
+    if (!h.startsWith('Bearer ')) {
+      return res
+        .status(401)
+        .set('WWW-Authenticate', 'Bearer')
+        .json({ message: 'unauthorized', timestamp: new Date().toISOString() });
     }
-    const h = req.headers.authorization || "";
-    const token = h.startsWith("Bearer ") ? h.slice(7) : "";
+    const token = h.slice(7);
     try { jwt.verify(token, jwtSecret); next(); }
-    catch { return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() }); }
+    catch { return res.status(401).set('WWW-Authenticate', 'Bearer error="invalid_token"').json({ message: 'unauthorized', timestamp: new Date().toISOString() }); }
   }
 
-  static getUserId(req: any) {
-    const h = req.get("authorization") || "";
-    const token = h.startsWith("Bearer ") ? h.slice(7) : "";
-    return jwt.verify(token, jwtSecret);
+  static getUserId(req: Request) {
+    const h = req.get("authorization") ?? "";
+    if (!h.startsWith('Bearer ')) return undefined;
+    try {
+      const decoded = jwt.verify(h.slice(7), jwtSecret) as JwtPayload | string;
+      return typeof decoded === 'string' ? decoded : decoded.sub?.toString();
+    } catch {
+      return undefined;
+    }
   }
 }

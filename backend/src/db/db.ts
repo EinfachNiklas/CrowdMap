@@ -7,6 +7,7 @@ const db = new Database(dbPath);
 db.pragma('journal_mode = WAL');
 db.pragma('busy_timeout = 5000');
 db.pragma('synchronous = NORMAL');
+db.pragma('foreign_keys = ON');
 db.exec(`
     CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,10 +20,10 @@ db.exec(`
 db.exec(`
     CREATE TABLE IF NOT EXISTS refreshTokenSessions (
         userId INTEGER PRIMARY KEY NOT NULL,
-        jtiHash VARCHAR(255) NOT NULL,
-        ttl VARCHAR(255) NOT NULL,
+        jtiHash TEXT NOT NULL,
+        expiresAt DATETIME NOT NULL,
         createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY(userId) REFERENCES users(id)
+        FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE
     )
     `);
 

@@ -7,7 +7,7 @@ const insert = db.prepare("INSERT INTO users (username, email, pwdhash) VALUES (
 const selectByID = db.prepare("SELECT id, username, email, createdAt FROM users WHERE id = ?");
 const selectBySearch = db.prepare("SELECT id, username, email, createdAt FROM users WHERE username = ? OR email = ?");
 
-router.post("/users/", (req, res) => {
+router.post("/users/", async (req, res) => {
     const { username, email, pwd } = req.body ?? {};
     if (typeof username !== 'string' || typeof email !== 'string' || typeof pwd !== 'string') {
         return res.status(400).json({ message: 'invalid types', timestamp: new Date().toISOString() });
@@ -22,7 +22,7 @@ router.post("/users/", (req, res) => {
     }
     
     const saltRounds = 12;
-    const pwdhash = bcrypt.hashSync(pwd, saltRounds);
+    const pwdhash = await bcrypt.hash(pwd, saltRounds);
 
     try {
         const info = insert.run(u, e, pwdhash);
@@ -30,7 +30,7 @@ router.post("/users/", (req, res) => {
         return res
             .status(201)
             .location(`/users/search/${id}`)
-            .json({ id, username: u, email: e, createdAt: new Date().toISOString() });
+            .json(selectByID.get(id));
     } catch (e: any) {
         if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
             return res.status(409).json({ message: 'username or email already exists', timestamp: new Date().toISOString() });

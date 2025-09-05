@@ -8,7 +8,7 @@ components:
   securitySchemes:
     AccessTokenAuth:
       type: http
-      scheme: Bearer
+      scheme: bearer
       bearerFormat: JWT
     refreshTokenCookieAuth:
       type: apiKey
@@ -221,10 +221,10 @@ paths:
           description: Successfully authenticated
           headers:
             Set-Cookie:
-              description: HTTP-only refresh token cookie; path is `/api/auth/refresh`. May be `Secure` in production.
+              description: HTTP-only refresh token cookie; path is `/auth/refresh`. May be `Secure` in production.
               schema:
                 type: string
-                example: refresh=eyJ...; Path=/api/auth/refresh; HttpOnly; Secure
+                example: refresh=eyJ...; Path=/auth/refresh; HttpOnly; Secure
           content:
             application/json:
               schema:

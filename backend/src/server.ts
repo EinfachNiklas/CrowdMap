@@ -4,7 +4,7 @@ import cors from 'cors';
 import userRouter from './routes/users';
 import authRouter from './routes/auth';
 import swaggerRouter from './routes/swagger';
-import authentication from './authentication';
+import Authentication from './authentication';
 import cookieParser from 'cookie-parser';
 
 const server = express();
@@ -13,10 +13,10 @@ server.use(express.json());
 server.use(cookieParser());
 server.use(cors());
 
-server.use(authentication.authenticate);
+server.use(Authentication.authenticate);
 
 server.use("/", userRouter);
-server.use("/",authRouter);
+server.use("/", authRouter);
 server.use("/", swaggerRouter);
 
 server.listen(port, () => {
