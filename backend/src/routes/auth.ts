@@ -3,13 +3,12 @@ import jwt from 'jsonwebtoken';
 import type { StringValue } from 'ms';
 import bcrypt from 'bcrypt';
 import db from '../db/db';
-import authentication from '../authentication';
 
 
 const router = express.Router();
 const jwtSecret: string = process.env.JWT_SECRET!;
 const authTtl: string = process.env.AUTH_TOKEN_TTL || "10m";
-const refreshTtl: string = "1m";
+const refreshTtl: string = process.env.REFRESH_TOKEN_TTL || "7d";
 
 const saltRounds: number = 12;
 
