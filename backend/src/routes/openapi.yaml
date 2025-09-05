@@ -272,3 +272,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+  /auth/logout:
+    post:
+      tags: [Auth]
+      deprecated: false
+      description: Logs out user and clears refresh cookie
+      security:
+        - refreshTokenCookieAuth: []
+        - AccessTokenAuth: []
+      responses:
+        "200":
+          description: Logged out successfully
+          headers:
+            Set-Cookie:
+              description: Clears the HTTP-only refresh token cookie
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
