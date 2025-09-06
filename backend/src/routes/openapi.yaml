@@ -23,8 +23,6 @@ components:
         timestamp:
           type: string
           format: date-time
-        details:
-          type: string
       required: [message, timestamp]
     UsersPostBody:
       type: object
@@ -309,6 +307,24 @@ paths:
                 $ref: "#/components/schemas/Message"
         "401":
           description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /auth/validate:
+    get:
+      tags: [Auth]
+      deprecated: false
+      description: Checks validity of authToken
+      responses:
+        "200":
+          description: AuthToken is valid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "401":
+          description: AuthToken is invalid
           content:
             application/json:
               schema:
