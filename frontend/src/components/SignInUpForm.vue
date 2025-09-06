@@ -83,7 +83,7 @@ const createUser = async () => {
             username: username.value,
             email: email.value
         });
-        const searchRes = await fetch(`/api/users/search?${params.toString()}`, {
+        const searchRes = await fetch(`/api/users/availability?${params.toString()}`, {
             method: 'GET'
         });
 
@@ -92,18 +92,16 @@ const createUser = async () => {
             loading.value = false;
             return;
         }
-
-        const searchData = await searchRes.json();
-        searchData.forEach((entry: { username: string; email: string; }) => {
-            if (entry.username === username.value) {
+        
+        const searchData = await searchRes.json() as {username: {available: boolean}, email: {available: boolean}, timestamp: string };
+        if (searchData.username.available === false) {
                 usernameIssue.value = true;
                 existingFields.add("Username");
             }
-            if (entry.email === email.value) {
+            if (searchData.email.available === false) {
                 emailIssue.value = true;
                 existingFields.add("Email");
             }
-        });
         if (usernameIssue.value || emailIssue.value) {
             const existingFieldsArray = Array.from(existingFields);
             notificationMessage.value = `${existingFieldsArray.join(" and ")} already ${existingFieldsArray.length === 1 ? "exists" : "exist"}. Please try again.`; loading.value = false;
