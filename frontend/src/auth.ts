@@ -17,7 +17,7 @@ export async function fetchFromAPI(path: RequestInfo | URL, init: RequestInit = 
         headers.set('Authorization', `Bearer ${t}`);
     }
     const req = new Request(path, { ...init, headers, credentials: 'include' });
-    let res = await fetch(req);
+    const res = await fetch(req);
     if (res.status === 401 && allowRefresh) {
         const refreshRes = await fetch("/api/auth/refresh", {
             method: 'POST',

@@ -5,11 +5,6 @@ import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { fetchFromAPI, setToken } from '@/auth';
 
-interface Message {
-    message: string,
-    timestamp: string
-}
-
 const props = defineProps({
     type: { type: String, required: true }
 });

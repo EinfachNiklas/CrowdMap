@@ -1,6 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
 import { createRouter, createWebHistory } from 'vue-router';
-import { checkValidity, getToken, isLoggedIn } from '@/auth';
+import { checkValidity } from '@/auth';
 
 const routes: RouteRecordRaw[] = [
   {
