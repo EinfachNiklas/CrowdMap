@@ -142,7 +142,6 @@ paths:
       deprecated: false
       description: Checks availability of username and/or email
       security: []
-      
       parameters:
         - in: query
           name: username
@@ -154,6 +153,7 @@ paths:
           name: email
           schema:
             type: string
+            format: email
           required: false
           description: email to check
       responses:
