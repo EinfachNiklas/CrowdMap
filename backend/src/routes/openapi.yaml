@@ -52,6 +52,28 @@ components:
           format: date-time
       required: [id, username, email, createdAt]
       additionalProperties: false
+    UsersAvailability:
+      type: object
+      properties:
+        username:
+          type: object
+          properties:
+            available:
+              type: boolean
+          required: [available]
+          additionalProperties: false
+        email:
+          type: object
+          properties:
+            available:
+              type: boolean
+          required: [available]
+          additionalProperties: false
+        timestamp:
+          type: string
+          format: date-time
+      required: [username, email, timestamp]
+      additionalProperties: false
     AuthLoginPostBody:
       type: object
       properties:
@@ -114,42 +136,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
-  /users/search:
+  /users/availability:
     get:
       tags: [Users]
       deprecated: false
-      description: Retrieves users matching username and/or email
+      description: Checks availability of username and/or email
+      security: []
       parameters:
         - in: query
           name: username
           schema:
             type: string
           required: false
-          description: username query
+          description: username to check
         - in: query
           name: email
           schema:
             type: string
+            format: email
           required: false
-          description: email query
-
+          description: email to check
       responses:
         "200":
-          description: Returned all found users
+          description: Returned availability result
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/UsersAvailability"
         "400":
           description: No query provided
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Message"
-        "401":
-          description: Unauthorized
           content:
             application/json:
               schema:

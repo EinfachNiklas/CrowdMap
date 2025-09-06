@@ -1,11 +1,12 @@
 import express from 'express';
 import db from '../db/db';
 import bcrypt from 'bcrypt';
+import Authentication from '../authentication';
 
 const router = express.Router();
 const insert = db.prepare("INSERT INTO users (username, email, pwdhash) VALUES (?,?,?)");
 const selectByID = db.prepare("SELECT id, username, email, createdAt FROM users WHERE id = ?");
-const selectBySearch = db.prepare("SELECT id, username, email, createdAt FROM users WHERE username = ? OR email = ?");
+const selectBySearch = db.prepare("SELECT username, email FROM users WHERE username = ? OR email = ?");
 
 router.post("/users/", async (req, res) => {
     const { username, email, pwd } = req.body ?? {};
@@ -44,6 +45,9 @@ router.get("/users/search/:id",(req, res)=>{
     if(!Number.isInteger(id)){
         return res.status(400).json({ message: 'invalid types', timestamp: new Date().toISOString() });
     }
+    if(Number(Authentication.getUserId(req)) !== id){
+        return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
+    }
     try {
         const row = selectByID.get(id);
         if(row){
@@ -57,16 +61,26 @@ router.get("/users/search/:id",(req, res)=>{
  
 });
 
-router.get("/users/search",(req, res)=>{
+router.get("/users/availability",(req, res)=>{
     let { username, email } = req.query ?? {};
     const u = username ? (username as string).trim() : null;
     const e = email ? (email as string).trim() : null;
+    let responseObject = {username: {available: true}, email: {available: true}, timestamp: "" };
     if (!u && !e) {
         return res.status(400).json({ message: 'no query provided', timestamp: new Date().toISOString() });
     }
     try {
-        const rows = selectBySearch.all(u,e);
-        return res.status(200).json(rows);
+        const rows = selectBySearch.all(u,e) as {username: string, email: string}[];
+        rows.forEach(row=>{
+            if(row.username === u){
+                responseObject.username.available=false;
+            }
+            if(row.email === e){
+                responseObject.email.available=false;
+            }
+        });
+        responseObject.timestamp = new Date().toISOString();
+        return res.status(200).json(responseObject);
         
     } catch (e: any) {
         return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString(), details: e.message });

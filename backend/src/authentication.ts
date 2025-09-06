@@ -12,6 +12,7 @@ export default class Authentication {
     if (req.method === 'OPTIONS') return next();
     const isPublic =
       (req.path === '/users' && req.method === 'POST') ||
+      req.path === '/users/availability' ||
       req.path === '/auth/login' ||
       req.path === '/auth/refresh' ||
       (process.env.NODE_ENV !== 'production' &&
