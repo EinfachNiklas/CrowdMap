@@ -3,7 +3,7 @@ import { readFileSync } from "fs";
 import path from 'path';
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
-import {OpenAPIV3_1} from 'openapi-types';
+import type {OpenAPIV3_1} from 'openapi-types';
 
 
 const router = express.Router();

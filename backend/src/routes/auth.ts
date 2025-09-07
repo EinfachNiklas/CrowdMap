@@ -67,7 +67,7 @@ router.post("/auth/login", async (req, res) => {
         res.set('Cache-Control', 'no-store');
         return res.status(200).json({ authToken: authToken });
     } catch (error: unknown) {
-        console.log(error);
+        console.error(error);
         return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }
 });
@@ -101,7 +101,7 @@ router.post("/auth/refresh", async (req, res) => {
         res.set('Cache-Control', 'no-store');
         return res.status(200).json({ authToken: authToken });
     } catch (error: unknown) {
-        console.log(error);
+        console.error(error);
         res.clearCookie("refresh", { path: "/auth" });
         return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
     }
@@ -126,7 +126,7 @@ router.post("/auth/logout", async (req, res) => {
         res.clearCookie("refresh", { path: "/auth" });
         return res.status(200).json({ message: 'logged out successfully', timestamp: new Date().toISOString() });
     } catch (error: unknown) {
-        console.log(error);
+        console.error(error);
         return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
     }
 });
