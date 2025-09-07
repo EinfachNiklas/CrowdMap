@@ -3,12 +3,13 @@ import { readFileSync } from "fs";
 import path from 'path';
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
+import type {OpenAPIV3_1} from 'openapi-types';
 
 
 const router = express.Router();
 
 const specPath = path.join(__dirname, 'openapi.yaml');
-let swaggerDocument: any;
+let swaggerDocument: OpenAPIV3_1.Document;
 try {
   const raw = readFileSync(specPath, 'utf8');
   swaggerDocument = parse(raw);

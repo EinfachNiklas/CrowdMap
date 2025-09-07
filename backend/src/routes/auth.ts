@@ -1,4 +1,4 @@
-import express, { Response } from 'express';
+import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import db from '../db/db';
@@ -66,8 +66,8 @@ router.post("/auth/login", async (req, res) => {
         setRefreshCookie(res, refreshToken);
         res.set('Cache-Control', 'no-store');
         return res.status(200).json({ authToken: authToken });
-    } catch (error: any) {
-        console.log(error)
+    } catch (error: unknown) {
+        console.error(error);
         return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }
 });
@@ -100,7 +100,8 @@ router.post("/auth/refresh", async (req, res) => {
         setRefreshCookie(res, refreshToken);
         res.set('Cache-Control', 'no-store');
         return res.status(200).json({ authToken: authToken });
-    } catch (error) {
+    } catch (error: unknown) {
+        console.error(error);
         res.clearCookie("refresh", { path: "/auth" });
         return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
     }
@@ -124,7 +125,8 @@ router.post("/auth/logout", async (req, res) => {
         deleteRefreshTokenSession.run(userId);
         res.clearCookie("refresh", { path: "/auth" });
         return res.status(200).json({ message: 'logged out successfully', timestamp: new Date().toISOString() });
-    } catch (error) {
+    } catch (error: unknown) {
+        console.error(error);
         return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
     }
 });
