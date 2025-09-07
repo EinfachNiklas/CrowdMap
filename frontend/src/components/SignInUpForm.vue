@@ -3,6 +3,7 @@ import CustomInput from './CustomInput.vue';
 import CustomButton from './CustomButton.vue';
 import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { fetchFromAPI, setToken } from '@/auth';
 
 const props = defineProps({
     type: { type: String, required: true }
@@ -83,7 +84,7 @@ const createUser = async () => {
             username: username.value,
             email: email.value
         });
-        const searchRes = await fetch(`/api/users/availability?${params.toString()}`, {
+        const searchRes = await fetchFromAPI(`/api/users/availability?${params.toString()}`, {
             method: 'GET'
         });
 
@@ -92,23 +93,23 @@ const createUser = async () => {
             loading.value = false;
             return;
         }
-        
-        const searchData = await searchRes.json() as {username: {available: boolean}, email: {available: boolean}, timestamp: string };
+
+        const searchData = await searchRes.json() as { username: { available: boolean }, email: { available: boolean }, timestamp: string };
         if (searchData.username.available === false) {
-                usernameIssue.value = true;
-                existingFields.add("Username");
-            }
-            if (searchData.email.available === false) {
-                emailIssue.value = true;
-                existingFields.add("Email");
-            }
+            usernameIssue.value = true;
+            existingFields.add("Username");
+        }
+        if (searchData.email.available === false) {
+            emailIssue.value = true;
+            existingFields.add("Email");
+        }
         if (usernameIssue.value || emailIssue.value) {
             const existingFieldsArray = Array.from(existingFields);
             notificationMessage.value = `${existingFieldsArray.join(" and ")} already ${existingFieldsArray.length === 1 ? "exists" : "exist"}. Please try again.`; loading.value = false;
             return;
         }
 
-        const createRes = await fetch("/api/users", {
+        const createRes = await fetchFromAPI("/api/users", {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -142,10 +143,43 @@ const createUser = async () => {
     loading.value = false;
 }
 
-const signInUser = () => {
+const signInUser = async () => {
+    loading.value = true;
     if (!validateInput()) {
-        return
+        loading.value = false;
+        return;
     }
+    const signInRes = await fetchFromAPI("/api/auth/login", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            email: email.value,
+            pwd: pwd1.value
+        })
+    }, false);
+    try {
+        const {authToken} = await signInRes.json();
+        switch (signInRes.status) {
+            case 200:
+                setToken(authToken);
+                await router.push({ name: 'home' });
+                break;
+            case 400:
+                notificationMessage.value = "Please fill out all required fields";
+                break;
+            case 401:
+                emailIssue.value = true;
+                pwd1Issue.value = true;
+                notificationMessage.value = "Email or password incorrect. Please try again";
+                break;
+            default:
+                notificationMessage.value = "Something went wrong. Please try again.";
+                break;
+        }
+    } catch {
+        notificationMessage.value = "Network error. Please check your connection and try again.";
+    }
+    loading.value = false;
 }
 
 </script>

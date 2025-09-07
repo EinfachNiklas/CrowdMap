@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Response } from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import db from '../db/db';
@@ -35,7 +35,7 @@ function setRefreshCookie(res: express.Response, token: string) {
         httpOnly: true,
         secure: isProd,
         sameSite: 'lax',
-        path: "/auth",
+        path: "/api/auth/refresh",
         maxAge: refreshTtlMs,
     });
 }
@@ -61,11 +61,13 @@ router.post("/auth/login", async (req, res) => {
         const authToken: string = signAuthToken(row.id.toString());
         const refreshToken: string = signRefreshToken(row.id.toString(), jti);
         deleteRefreshTokenSession.run(row.id);
-        insertRefreshTokenSession.run(row.id, async () => await bcrypt.hash(jti, saltRounds), new Date(Date.now() + refreshTtlMs).toISOString());
+        const jtiHash = await bcrypt.hash(jti, saltRounds);
+        insertRefreshTokenSession.run(row.id, jtiHash, new Date(Date.now() + refreshTtlMs).toISOString());
         setRefreshCookie(res, refreshToken);
         res.set('Cache-Control', 'no-store');
         return res.status(200).json({ authToken: authToken });
     } catch (error: any) {
+        console.log(error)
         return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }
 });
@@ -85,15 +87,16 @@ router.post("/auth/refresh", async (req, res) => {
         if (!(await bcrypt.compare(payload.jti, row.jtiHash))) {
             return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
         }
-        deleteRefreshTokenSession.run(userId);
         if (Date.parse(row.expiresAt) < Date.now()) {
             res.clearCookie("refresh", { path: "/auth" });
             return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
         }
+        deleteRefreshTokenSession.run(userId);
         const newJti = randomUUID();
         const authToken: string = signAuthToken(userId.toString());
         const refreshToken: string = signRefreshToken(userId, newJti);
-        insertRefreshTokenSession.run(userId, async () => await bcrypt.hash(newJti, saltRounds), new Date(Date.now() + refreshTtlMs).toISOString());
+        const newJtiHash = await bcrypt.hash(newJti, saltRounds);
+        insertRefreshTokenSession.run(userId, newJtiHash, new Date(Date.now() + refreshTtlMs).toISOString());
         setRefreshCookie(res, refreshToken);
         res.set('Cache-Control', 'no-store');
         return res.status(200).json({ authToken: authToken });
@@ -124,6 +127,11 @@ router.post("/auth/logout", async (req, res) => {
     } catch (error) {
         return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
     }
+});
+
+router.get("/auth/validate", (req, res) => {
+    res.set("Cache-Control", "no-store");
+    return res.status(200).json({ message: 'valid', timestamp: new Date().toISOString() });
 });
 
 export default router;

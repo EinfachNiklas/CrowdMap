@@ -1,5 +1,6 @@
 import type { RouteRecordRaw } from 'vue-router';
 import { createRouter, createWebHistory } from 'vue-router';
+import { checkValidity } from '@/auth';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -34,9 +35,22 @@ const router = createRouter({
   }
 });
 
-router.beforeEach((to) => {
+router.beforeEach(async (to) => {
   const title = (to.meta?.title as string | undefined) ?? 'App';
   document.title = `${title} | EventApp`;
+  const authed = to.meta?.requiresAuth ? await checkValidity() : false;
+  const isGuestOnly = (
+    to.name === "home" &&
+    to.query.overlayActive === "true" &&
+    ['signin', 'signup'].includes(String(to.query.overlayType ?? ''))
+  );
+
+  if (to.meta?.requiresAuth && !authed) {
+    return { name: 'home', query: { overlayActive: "true", overlayType: "signin" } };
+  }
+  if ((to.meta?.guestOnly || isGuestOnly) && await checkValidity()) {
+    return { name: 'home' };
+  }
 });
 
 
