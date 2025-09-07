@@ -87,11 +87,11 @@ router.post("/auth/refresh", async (req, res) => {
         if (!(await bcrypt.compare(payload.jti, row.jtiHash))) {
             return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
         }
-        deleteRefreshTokenSession.run(userId);
         if (Date.parse(row.expiresAt) < Date.now()) {
             res.clearCookie("refresh", { path: "/auth" });
             return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
         }
+        deleteRefreshTokenSession.run(userId);
         const newJti = randomUUID();
         const authToken: string = signAuthToken(userId.toString());
         const refreshToken: string = signRefreshToken(userId, newJti);

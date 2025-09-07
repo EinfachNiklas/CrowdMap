@@ -237,7 +237,7 @@ paths:
               description: HTTP-only refresh token cookie; path is `/auth/refresh`. May be `Secure` in production.
               schema:
                 type: string
-                example: refresh=eyJ...; Path=/auth/refresh; HttpOnly; Secure
+                example: refresh=eyJ...; Path=/api/auth/refresh; HttpOnly; Secure
           content:
             application/json:
               schema:
