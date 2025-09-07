@@ -32,11 +32,13 @@ router.post("/users/", async (req, res) => {
             .status(201)
             .location(`/users/search/${id}`)
             .json(selectByID.get(id));
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
         if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
             return res.status(409).json({ message: 'username or email already exists', timestamp: new Date().toISOString() });
         }
-        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString(), details: e.message });
+        console.error(e);
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString()});
     }
 });
 
@@ -55,17 +57,18 @@ router.get("/users/search/:id",(req, res)=>{
         }else{
             return res.status(404).json({ message: 'no entry found', timestamp: new Date().toISOString() });
         }
-    } catch (e: any) {
-        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString(), details: e.message });
+    } catch (e: unknown) {
+        console.error(e);
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }
  
 });
 
 router.get("/users/availability",(req, res)=>{
-    let { username, email } = req.query ?? {};
+    const { username, email } = req.query ?? {};
     const u = username ? (username as string).trim() : null;
     const e = email ? (email as string).trim() : null;
-    let responseObject = {username: {available: true}, email: {available: true}, timestamp: "" };
+    const responseObject = {username: {available: true}, email: {available: true}, timestamp: "" };
     if (!u && !e) {
         return res.status(400).json({ message: 'no query provided', timestamp: new Date().toISOString() });
     }
@@ -82,8 +85,9 @@ router.get("/users/availability",(req, res)=>{
         responseObject.timestamp = new Date().toISOString();
         return res.status(200).json(responseObject);
         
-    } catch (e: any) {
-        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString(), details: e.message });
+    } catch (e: unknown) {
+        console.error(e);
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString()});
     }
  
 });
