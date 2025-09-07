@@ -35,7 +35,7 @@ function setRefreshCookie(res: express.Response, token: string) {
         httpOnly: true,
         secure: isProd,
         sameSite: 'lax',
-        path: "/auth",
+        path: "/api/auth/refresh",
         maxAge: refreshTtlMs,
     });
 }
@@ -129,7 +129,8 @@ router.post("/auth/logout", async (req, res) => {
     }
 });
 
-router.get("/auth/validate", (res: Response) => {
+router.get("/auth/validate", (req, res) => {
+    res.set("Cache-Control", "no-store");
     return res.status(200).json({ message: 'valid', timestamp: new Date().toISOString() });
 });
 

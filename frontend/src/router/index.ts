@@ -37,12 +37,18 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const title = (to.meta?.title as string | undefined) ?? 'App';
-  const authed = await checkValidity();
   document.title = `${title} | EventApp`;
+  const authed = to.meta?.requiresAuth ? await checkValidity() : false;
+  const isGuestOnly = (
+    to.name === "home" &&
+    to.query.overlayActive === "true" &&
+    ['signin', 'signup'].includes(String(to.query.overlayType ?? ''))
+  );
+
   if (to.meta?.requiresAuth && !authed) {
     return { name: 'home', query: { overlayActive: "true", overlayType: "signin" } };
   }
-  if (to.meta?.guestOnly && authed) {
+  if ((to.meta?.guestOnly || isGuestOnly) && await checkValidity()) {
     return { name: 'home' };
   }
 });

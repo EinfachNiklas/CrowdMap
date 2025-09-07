@@ -11,7 +11,10 @@ const server = express();
 const port: number = parseInt(process.env.PORT ?? '', 10) || 4000;
 server.use(express.json());
 server.use(cookieParser());
-server.use(cors());
+server.use(cors({
+  origin: "*",
+  credentials: true
+}));
 
 server.use(Authentication.authenticate);
 

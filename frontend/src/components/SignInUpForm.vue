@@ -158,10 +158,10 @@ const signInUser = async () => {
         })
     }, false);
     try {
-        const resJson = await signInRes.json() as { authToken: string };
+        const {authToken} = await signInRes.json();
         switch (signInRes.status) {
             case 200:
-                setToken(resJson.authToken);
+                setToken(authToken);
                 await router.push({ name: 'home' });
                 break;
             case 400:
