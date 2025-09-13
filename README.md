@@ -107,7 +107,7 @@ To be done
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License version 3 only,
 as published by the Free Software Foundation.
-See the [LICENSE.md](LICENSE.md) file for details
+See the [LICENSE](https://github.com/EinfachNiklas/CrowdMap/blob/main/LICENSE) file for details
 
 ## Acknowledgments
 
