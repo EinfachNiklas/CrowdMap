@@ -1,6 +1,6 @@
 openapi: 3.1.0
 info:
-  title: event-app-api
+  title: CrowdMap-API
   version: 1.0.0
 security:
   - AccessTokenAuth: []
