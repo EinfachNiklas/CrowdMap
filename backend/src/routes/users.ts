@@ -21,7 +21,10 @@ router.post("/users/", async (req, res) => {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) {
         return res.status(400).json({ message: 'invalid email', timestamp: new Date().toISOString() });
     }
-    
+    if (!/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9])(?!.*\s).{6,}$/.test(pwd)) {
+        return res.status(400).json({ message: 'invalid password', timestamp: new Date().toISOString() });
+    }
+
     const saltRounds = 12;
     const pwdhash = await bcrypt.hash(pwd, saltRounds);
 
@@ -32,64 +35,64 @@ router.post("/users/", async (req, res) => {
             .status(201)
             .location(`/users/search/${id}`)
             .json(selectByID.get(id));
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
         if (e.code === 'SQLITE_CONSTRAINT_UNIQUE') {
             return res.status(409).json({ message: 'username or email already exists', timestamp: new Date().toISOString() });
         }
         console.error(e);
-        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString()});
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }
 });
 
-router.get("/users/search/:id",(req, res)=>{
+router.get("/users/search/:id", (req, res) => {
     const id = Number(req.params.id);
-    if(!Number.isInteger(id)){
+    if (!Number.isInteger(id)) {
         return res.status(400).json({ message: 'invalid types', timestamp: new Date().toISOString() });
     }
-    if(Number(Authentication.getUserId(req)) !== id){
+    if (Number(Authentication.getUserId(req)) !== id) {
         return res.status(401).json({ message: 'unauthorized', timestamp: new Date().toISOString() });
     }
     try {
         const row = selectByID.get(id);
-        if(row){
+        if (row) {
             return res.status(200).json(row);
-        }else{
+        } else {
             return res.status(404).json({ message: 'no entry found', timestamp: new Date().toISOString() });
         }
     } catch (e: unknown) {
         console.error(e);
         return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }
- 
+
 });
 
-router.get("/users/availability",(req, res)=>{
+router.get("/users/availability", (req, res) => {
     const { username, email } = req.query ?? {};
     const u = username ? (username as string).trim() : null;
     const e = email ? (email as string).trim() : null;
-    const responseObject = {username: {available: true}, email: {available: true}, timestamp: "" };
+    const responseObject = { username: { available: true }, email: { available: true }, timestamp: "" };
     if (!u && !e) {
         return res.status(400).json({ message: 'no query provided', timestamp: new Date().toISOString() });
     }
     try {
-        const rows = selectBySearch.all(u,e) as {username: string, email: string}[];
-        rows.forEach(row=>{
-            if(row.username === u){
-                responseObject.username.available=false;
+        const rows = selectBySearch.all(u, e) as { username: string, email: string }[];
+        rows.forEach(row => {
+            if (row.username === u) {
+                responseObject.username.available = false;
             }
-            if(row.email === e){
-                responseObject.email.available=false;
+            if (row.email === e) {
+                responseObject.email.available = false;
             }
         });
         responseObject.timestamp = new Date().toISOString();
         return res.status(200).json(responseObject);
-        
+
     } catch (e: unknown) {
         console.error(e);
-        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString()});
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }
- 
+
 });
 
 
