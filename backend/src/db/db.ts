@@ -1,0 +1,30 @@
+import Database from 'better-sqlite3';
+import path from 'path';
+import fs from 'fs';
+const dbPath = path.join(__dirname,"../../data/app.db");
+fs.mkdirSync(path.dirname(dbPath), { recursive: true });
+const db = new Database(dbPath);
+db.pragma('journal_mode = WAL');
+db.pragma('busy_timeout = 5000');
+db.pragma('synchronous = NORMAL');
+db.pragma('foreign_keys = ON');
+db.exec(`
+    CREATE TABLE IF NOT EXISTS users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username VARCHAR(64) NOT NULL UNIQUE,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        pwdhash VARCHAR(255) NOT NULL,
+        createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    )
+    `);
+db.exec(`
+    CREATE TABLE IF NOT EXISTS refreshTokenSessions (
+        userId INTEGER PRIMARY KEY NOT NULL,
+        jtiHash TEXT NOT NULL,
+        expiresAt DATETIME NOT NULL,
+        createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE
+    )
+    `);
+
+export default db;

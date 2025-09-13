@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import EventMap from './components/EventMap.vue';
+import { RouterView } from 'vue-router';
 </script>
 
 <template>
-  <EventMap></EventMap>
+    <RouterView></RouterView>
 </template>
