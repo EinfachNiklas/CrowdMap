@@ -37,7 +37,7 @@ const router = createRouter({
 
 router.beforeEach(async (to) => {
   const title = (to.meta?.title as string | undefined) ?? 'App';
-  document.title = `${title} | EventApp`;
+  document.title = `${title} | CrowdMap`;
   const authed = to.meta?.requiresAuth ? await checkValidity() : false;
   const isGuestOnly = (
     to.name === "home" &&
