@@ -47,7 +47,7 @@ router.post("/users/", async (req, res) => {
 
 router.get("/users/search/:id", (req, res) => {
     const id = Number(req.params.id);
-    if (!Number.isInteger(id)) {
+    if (!Number.isInteger(id) || id <= 0) {
         return res.status(400).json({ message: 'invalid types', timestamp: new Date().toISOString() });
     }
     if (Number(Authentication.getUserId(req)) !== id) {

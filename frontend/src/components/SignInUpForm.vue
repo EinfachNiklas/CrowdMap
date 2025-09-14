@@ -48,7 +48,7 @@ const validateInput = () => {
             return false;
         }
         if(!pwd1.value.match(/^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z0-9])(?!.*\s).{6,}$/)){
-            pwd1Issue.value = !pwd1.value;
+            pwd1Issue.value = true;
             notificationMessage.value = "Password must be at least 6 characters long and include letters, digits and special characters";
             return false;
         }
