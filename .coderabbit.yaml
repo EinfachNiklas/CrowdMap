@@ -7,5 +7,5 @@ reviews:
   collapse_walkthrough: false
   auto_review:
     enabled: true
-    drafts: false
+    drafts: true
     base_branches: ["dev", "main"]
