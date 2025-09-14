@@ -4,6 +4,7 @@ import cors from 'cors';
 import userRouter from './routes/users';
 import authRouter from './routes/auth';
 import swaggerRouter from './routes/swagger';
+import geocodingRouter from './routes/geocoding';
 import Authentication from './authentication';
 import cookieParser from 'cookie-parser';
 
@@ -21,6 +22,9 @@ server.use(Authentication.authenticate);
 server.use("/", userRouter);
 server.use("/", authRouter);
 server.use("/", swaggerRouter);
+server.use("/", geocodingRouter);
+
+server.set('trust proxy', 1);
 
 server.listen(port, () => {
   console.log(`Volume Server started on port ${port} ...`);
