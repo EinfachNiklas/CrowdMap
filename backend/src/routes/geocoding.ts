@@ -4,6 +4,7 @@ import { getClientIp } from '../tools';
 const router = express.Router();
 const GEOAPIFY_API_KEY = process.env.GEOAPIFY_API_KEY as string;
 if (!GEOAPIFY_API_KEY) throw new Error('GEOAPIFY_API_KEY is required');
+const isProd = process.env.NODE_ENV === "production";
 
 
 
@@ -28,7 +29,7 @@ router.get("/geocoding/coordinates/query", async (req, res) => {
 router.get("/geocoding/coordinates/ip", async (req, res) => {
     const ip = getClientIp(req);
     try {
-        const geores = await fetch(`https://api.geoapify.com/v1/ipinfo?ip=${ip}&apiKey=${GEOAPIFY_API_KEY}`, {
+        const geores = await fetch(`https://api.geoapify.com/v1/ipinfo?${isProd ? "ip=" + ip : ""}&apiKey=${GEOAPIFY_API_KEY}`, {
             method: "GET"
         })
         const geodata = await geores.json();

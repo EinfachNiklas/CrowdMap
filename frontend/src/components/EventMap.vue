@@ -13,7 +13,7 @@ defineProps<{
 }>();
 
 
-const zoom = ref<number>(5);
+const zoom = ref<number>(10);
 
 
 </script>
