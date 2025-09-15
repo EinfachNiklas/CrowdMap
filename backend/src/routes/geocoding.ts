@@ -9,8 +9,8 @@ const isProd = process.env.NODE_ENV === "production";
 
 
 router.get("/geocoding/coordinates/query", async (req, res) => {
-    const { query }: { query: string } = req.body ?? {};
-    if (!query) {
+    const query = req.query.query;
+    if (!query || typeof query !== "string" ) {
         return res.status(400).json({ message: 'invalid types', timestamp: new Date().toISOString() });
     }
     const q = query.trim();
