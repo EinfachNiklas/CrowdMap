@@ -37,10 +37,14 @@ router.get("/geocoding/coordinates/query", async (req, res) => {
 
 router.get("/geocoding/coordinates/ip", async (req, res) => {
     const ip = getClientIp(req);
+    const controller = new AbortController();
+    const t = setTimeout(() => controller.abort(), 5000);
     try {
         const geores = await fetch(`https://api.geoapify.com/v1/ipinfo?${isProd ? "ip=" + ip : ""}&apiKey=${GEOAPIFY_API_KEY}`, {
-            method: "GET"
+            method: "GET",
+            signal: controller.signal
         })
+        clearTimeout(t);
         const geodata = await geores.json();
         const { latitude, longitude }: { latitude: number, longitude: number } = geodata.location;
         res.status(200).json({ lat: latitude, lon: longitude });
