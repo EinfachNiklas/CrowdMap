@@ -3,6 +3,7 @@ import HeaderBar from '@/components/HeaderBar.vue';
 import EventMap from '@/components/EventMap.vue';
 import SignInUpForm from '@/components/SignInUpForm.vue';
 import Overlay from '@/components/OverlayField.vue';
+import ToolBar from '@/components/ToolBar.vue';
 import { computed, onMounted, ref } from 'vue';
 import { fetchFromAPI } from '@/auth';
 type Coords = { lat: number; lon: number };
@@ -45,10 +46,11 @@ const handleCoordinatesQueryResult = ({ lat, lon }: { lat: number, lon: number }
     <div class="grid h-svh grid-rows-[auto_1fr]">
         <HeaderBar v-on:coordinates-result="handleCoordinatesQueryResult" class="" />
         <main class="min-h-0" :class="{ 'blur-sm': isValidOverlay, 'pointer-events-none': isValidOverlay }">
-            <EventMap class="h-full w-full select-none z-0 relative" :center="[latitude, longitude]" :center-version="centerVersion"
-                :marker-positions="[]" />
+            <EventMap class="h-full w-full select-none z-0 relative" :center="[latitude, longitude]"
+                :center-version="centerVersion" :marker-positions="[]" />
         </main>
     </div>
+    <ToolBar />
     <Overlay v-if="isValidOverlay">
         <SignInUpForm :type="overlayType" />
     </Overlay>
