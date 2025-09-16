@@ -5,12 +5,12 @@ import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet';
 import { computed, nextTick, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 
-import { Point, type LatLngExpression, type PointExpression } from 'leaflet'
+import { Point, type LatLngExpression, type PointExpression, type PointTuple } from 'leaflet'
 
 
 const props = defineProps({
     markerPositions: { type: Array as PropType<LatLngExpression[]>, required: false, default: () => [] },
-    center: { type: [Array, Object] as PropType<PointExpression>, required: true },
+    center: { type:  Object as PropType<PointTuple>, required: true },
     centerVersion: { type: Number, required: true}
 });
 
@@ -21,7 +21,7 @@ watch(
     () => [props.center, props.centerVersion],
     async () => {
         const c = props.center;
-        if (!c || c instanceof Point || !c[0] || !c[1]) {
+        if (!c || !c[0] || !c[1]) {
             return;
         }
         const d = (n: number) => (n.toString().split('.')[1] ?? '').length;
@@ -34,6 +34,7 @@ watch(
     },
     { deep: true, immediate: true, flush: 'post' }
 );
+
 
 </script>
 

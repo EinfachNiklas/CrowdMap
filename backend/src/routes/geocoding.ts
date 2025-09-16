@@ -10,22 +10,28 @@ const isProd = process.env.NODE_ENV === "production";
 
 router.get("/geocoding/coordinates/query", async (req, res) => {
     const query = req.query.query;
-    if (!query || typeof query !== "string" ) {
+    if (!query || typeof query !== "string") {
         return res.status(400).json({ message: 'invalid types', timestamp: new Date().toISOString() });
     }
     const q = query.trim();
     try {
-        const geores = await fetch(`https://api.geoapify.com/v1/geocode/search?text=${q}&apiKey=${GEOAPIFY_API_KEY}`, {
-            method: "GET"
-        })
+        const controller = new AbortController();
+        const t = setTimeout(() => controller.abort(), 5000);
+        const url = new URL('https://api.geoapify.com/v1/geocode/search');
+        url.search = new URLSearchParams({ text: q, apiKey: GEOAPIFY_API_KEY }).toString();
+        const geores = await fetch(url, { method: "GET", signal: controller.signal });
+        clearTimeout(t);
+        if (!geores.ok) {
+            return res.status(geores.status).json({ message: 'geocoder_error', timestamp: new Date().toISOString() });
+        }
         const geodata = await geores.json();
-        if(geodata.features.length===0){
-            res.status(200).json({});
+        if (geodata.features.length === 0) {
+            return res.status(200).json({});
         }
         const { lat, lon }: { lat: number, lon: number } = geodata.features[0].properties;
-        res.status(200).json({ lat: lat, lon: lon });
+        return res.status(200).json({ lat: lat, lon: lon });
     } catch (error) {
-        res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }
 });
 
