@@ -89,6 +89,15 @@ components:
           type: string
       required: [authToken]
       additionalProperties: false
+    GeocodingCoordinatesResponse:
+      type: object
+      properties:
+        lat:
+          type: number
+        lon:
+          type: number
+      required: [lat, lon]
+      additionalProperties: false
 
 paths:
   /users:
@@ -325,6 +334,57 @@ paths:
                 $ref: "#/components/schemas/Message"
         "401":
           description: AuthToken is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /geocoding/coordinates/query:
+    get:
+      tags: [Geocoding]
+      deprecated: false
+      description: Returns coordinates for a location query
+      security: []
+      parameters:
+        - in: query
+          name: query
+          schema:
+            type: string
+          required: true
+          description: Free-text location to geocode
+      responses:
+        "200":
+          description: Coordinates resolved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeocodingCoordinatesResponse"
+        "400":
+          description: Missing fields or invalid types
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /geocoding/coordinates/ip:
+    get:
+      tags: [Geocoding]
+      deprecated: false
+      description: Returns coordinates derived from the client's IP address
+      security: []
+      responses:
+        "200":
+          description: Coordinates resolved successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeocodingCoordinatesResponse"
+        "500":
+          description: Internal server error
           content:
             application/json:
               schema:

@@ -12,7 +12,6 @@ export function isLoggedIn() {
     return !!getToken();
 }
 export async function fetchFromAPI(path: RequestInfo | URL, init: RequestInit = {}, allowRefresh: boolean = true) {
-
     const toURL = (p: RequestInfo | URL): URL => {
         if (typeof p === 'string') return new URL(p, window.location.origin);
         if (p instanceof URL) return p;

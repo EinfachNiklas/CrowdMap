@@ -16,7 +16,9 @@ export default class Authentication {
       req.path === '/auth/login' ||
       req.path === '/auth/refresh' ||
       (process.env.NODE_ENV !== 'production' &&
-        (req.path === '/api-docs' || req.path.startsWith('/api-docs/')));
+        (req.path === '/api-docs' || req.path.startsWith('/api-docs/'))) ||
+      req.path === '/geocoding/coordinates/query' ||
+      req.path === '/geocoding/coordinates/ip';
 
     if (isPublic) return next();
     const h = req.headers.authorization ?? "";
