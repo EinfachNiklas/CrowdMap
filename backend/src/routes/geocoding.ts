@@ -19,6 +19,9 @@ router.get("/geocoding/coordinates/query", async (req, res) => {
             method: "GET"
         })
         const geodata = await geores.json();
+        if(geodata.features.length===0){
+            res.status(200).json({});
+        }
         const { lat, lon }: { lat: number, lon: number } = geodata.features[0].properties;
         res.status(200).json({ lat: lat, lon: lon });
     } catch (error) {
