@@ -9,6 +9,7 @@ type Coords = { lat: number; lon: number };
 
 const latitude = ref<number>(0);
 const longitude = ref<number>(0);
+const centerVersion = ref<number>(0);
 
 const props = defineProps({
     overlayActive: { type: Boolean, required: false, default: false },
@@ -35,6 +36,7 @@ onMounted(async () => {
 const handleCoordinatesQueryResult = ({ lat, lon }: { lat: number, lon: number }) => {
     latitude.value = lat;
     longitude.value = lon;
+    centerVersion.value++;
 };
 
 </script>
@@ -43,7 +45,7 @@ const handleCoordinatesQueryResult = ({ lat, lon }: { lat: number, lon: number }
     <div class="grid h-svh grid-rows-[auto_1fr]">
         <HeaderBar v-on:coordinates-result="handleCoordinatesQueryResult" class="" />
         <main class="min-h-0" :class="{ 'blur-sm': isValidOverlay, 'pointer-events-none': isValidOverlay }">
-            <EventMap class="h-full w-full select-none z-0 relative" :center="[latitude, longitude]"
+            <EventMap class="h-full w-full select-none z-0 relative" :center="[latitude, longitude]" :center-version="centerVersion"
                 :marker-positions="[]" />
         </main>
     </div>
