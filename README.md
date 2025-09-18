@@ -27,13 +27,25 @@ Define environment variables: Go to ```/backend/``` and ```/frontend/```. Do the
 1. Create a copy of the file ```.env.example``` and rename it to ```.env``` 
 2. Define the variables to your liking (Have a look [here](#environment-variables) for further information about each variable) 
 
-Now you can open one terminal in each directories (```/backend/``` and ```/frontend/```) and start a dev server with the following command:
+Now you can either 
+- open one terminal in each directories (```/backend/``` and ```/frontend/```) and start a **dev server** with the following command:
 
 ```
 npm run dev
 ```
 
-After that, you can open a browser and connect to ```http://localhost:YOUR_FRONTEND_PORT``` to see the frontend running.
+or
+
+
+- open two terminals in the root directory and start a **preview server** with running each of the following commands in one terminal:
+
+```
+npm run start:backend
+npm run start:frontend
+```
+
+
+After that, you can open a browser and connect to ```http://localhost:PORT_DEV```/```http://localhost:PORT_PREVIEW``` to see the frontend running.
 You can also access ```http://localhost:YOUR_BACKEND_PORT/api-docs``` for a [swagger](https://swagger.io/) documentation for the backend API.
 ## Running the tests
 
@@ -79,6 +91,8 @@ Copy `/frontend/.env.example` to `/frontend/.env` and change the values:
 | Variable              | Description                            | Default                 |
 | --------------------- | -------------------------------------- | ----------------------- |
 | `VITE_BACKEND_ORIGIN` | Backend Origin on same device for vite | `http://localhost:4000` |
+| `PORT_DEV`            | Port for Frontend Dev Server           | `5173`                  |
+| `PORT_PREVIEW`        | Port for Frontend Preview Server       | `4173`                  |
 
 
 #### Backend
