@@ -89,8 +89,8 @@ Copy `/frontend/.env.example` to `/frontend/.env` and change the values:
 | Variable              | Description                            | Default                 |
 | --------------------- | -------------------------------------- | ----------------------- |
 | `VITE_BACKEND_ORIGIN` | Backend Origin on same device for vite | `http://localhost:4000` |
-| `PORT_DEV`            | Port for Frontend Dev Server           | `5173`                  |
-| `PORT_PREVIEW`        | Port for Frontend Preview Server       | `4173`                  |
+| `VITE_PORT_DEV`            | Port for Frontend Dev Server           | `5173`                  |
+| `VITE_PORT_PREVIEW`        | Port for Frontend Preview Server       | `4173`                  |
 
 
 #### Backend
