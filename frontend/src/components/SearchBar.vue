@@ -7,7 +7,7 @@ const emit = defineEmits<{ (e: 'enter', value: string, ev: KeyboardEvent): void 
 
 <template>
     <div class="flex border-white border-b-1 py-2 justify-between w-150">
-        <Icon icon="ic:baseline-search" class="text-white text-2xl"/>
+        <Icon icon="ic:baseline-search" class="text-white text-2xl" aria-hidden="true"/>
         <input v-model="q" @keydown.enter.prevent="emit('enter', q, $event)" type="text" name="SearchBar" id="SearchBar"
             class="text-white focus:outline-none w-95/100" placeholder="Search for location">
     </div>
