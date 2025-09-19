@@ -17,7 +17,7 @@ What things you need to install the software and how to install them
 This is a step by step guide that will tell you how to get a development env running.
 
 Run the setup script: In the root directory run
-```
+```bash
 npm run setup-initial
 ```
 This will install all required dependencies to run the application and create a copy of the files ```.env.example``` named ```.env``` in the directories ```/backend/``` and ```/frontend/``` to configure your environment variables. 
@@ -26,9 +26,9 @@ Open both of these ```.env``` files and define the variables to your liking. (Ha
 
 
 Now you can either 
-- open one terminal in each directories (```/backend/``` and ```/frontend/```) and start a **dev server** with the following command:
+- open one terminal in each directory (```/backend/``` and ```/frontend/```) and start a **dev server** with the following command:
 
-```
+```bash
 npm run dev
 ```
 
@@ -37,13 +37,13 @@ or
 
 - open two terminals in the root directory and start a **preview server** with running each of the following commands in one terminal:
 
-```
+```bash
 npm run start:backend
 npm run start:frontend
 ```
 
 
-After that, you can open a browser and connect to ```http://localhost:PORT_DEV```/```http://localhost:PORT_PREVIEW``` to see the frontend running.
+After that, you can open a browser and connect to ```http://localhost:PORT_DEV``` or ```http://localhost:PORT_PREVIEW``` to see the frontend running.
 You can also access ```http://localhost:YOUR_BACKEND_PORT/api-docs``` for a [swagger](https://swagger.io/) documentation for the backend API.
 ## Running the tests
 
@@ -63,7 +63,7 @@ To be done
 
 ### Static Code Checks
 Static Code Checks are implemented via eslint. To execute them, simply run 
-```
+```bash
 npm run lint 
 ```
 in either of the directories ```/backend/``` and ```/frontend/```.
@@ -89,8 +89,8 @@ Copy `/frontend/.env.example` to `/frontend/.env` and change the values:
 | Variable              | Description                            | Default                 |
 | --------------------- | -------------------------------------- | ----------------------- |
 | `VITE_BACKEND_ORIGIN` | Backend Origin on same device for vite | `http://localhost:4000` |
-| `PORT_DEV`            | Port for Frontend Dev Server           | `5173`                  |
-| `PORT_PREVIEW`        | Port for Frontend Preview Server       | `4173`                  |
+| `VITE_PORT_DEV`            | Port for Frontend Dev Server           | `5173`                  |
+| `VITE_PORT_PREVIEW`        | Port for Frontend Preview Server       | `4173`                  |
 
 
 #### Backend

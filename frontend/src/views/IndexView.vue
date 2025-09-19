@@ -6,7 +6,6 @@ import Overlay from '@/components/OverlayField.vue';
 import ToolBar from '@/components/ToolBar.vue';
 import { computed, onMounted, ref } from 'vue';
 import { fetchFromAPI } from '@/auth';
-type Coords = { lat: number; lon: number };
 
 const latitude = ref<number>(0);
 const longitude = ref<number>(0);
@@ -30,7 +29,7 @@ onMounted(async () => {
         latitude.value = lat;
         longitude.value = lon;
     } catch (e) {
-        console.error("unable to fetch coordinates for ip")
+        console.error(`unable to fetch coordinates for ip - ${e}`);
     }
 });
 

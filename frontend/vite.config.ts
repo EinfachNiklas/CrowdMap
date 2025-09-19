@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      port: env.PORT_DEV || 5173,
+      port: parseInt(env.VITE_PORT_DEV) || 5173,
       strictPort: true,
       proxy: {
         '/api': {
@@ -32,7 +32,7 @@ export default defineConfig(({ mode }) => {
       }
     },
     preview: {
-      port: env.PORT_PREVIEW ||4173,
+      port: parseInt(env.VITE_PORT_PREVIEW) ||4173,
       strictPort: true,
       proxy: {
         '/api': {

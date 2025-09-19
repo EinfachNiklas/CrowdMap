@@ -14,7 +14,7 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "setup-initial": "npm i && node scripts/setup.js install-deps && node scripts/setup.js copy-env",
+    "setup-initial": "npm i && node scripts/setup.js install-deps --skip-root && node scripts/setup.js copy-env",
     "start:frontend": "npm run preview --prefix frontend",
     "start:backend": "npm run start --prefix backend"
   },
