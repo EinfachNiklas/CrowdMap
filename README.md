@@ -14,18 +14,16 @@ What things you need to install the software and how to install them
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+This is a step by step guide that will tell you how to get a development env running.
 
-Install the node deps. Go to the root directory and run
+Run the setup script: In the root directory run
 ```
-npm i
-npm i --prefix frontend/
-npm i --prefix backend/
+npm run setup-initial
 ```
+This will install all required dependencies to run the application and create a copy of the files ```.env.example``` named ```.env``` in the directories ```/backend/``` and ```/frontend/``` to configure your environment variables. 
 
-Define environment variables: Go to ```/backend/``` and ```/frontend/```. Do the following steps in both directories. 
-1. Create a copy of the file ```.env.example``` and rename it to ```.env``` 
-2. Define the variables to your liking (Have a look [here](#environment-variables) for further information about each variable) 
+Open both of these ```.env``` files and define the variables to your liking. (Have a look [here](#environment-variables) for further information about each variable) 
+
 
 Now you can either 
 - open one terminal in each directories (```/backend/``` and ```/frontend/```) and start a **dev server** with the following command:
