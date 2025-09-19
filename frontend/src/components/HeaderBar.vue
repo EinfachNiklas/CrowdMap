@@ -18,7 +18,7 @@ const displayLocations = async (query: string) => {
         const coordinates = await res.json() as { lat: number; lon: number };
         emit('coordinatesResult', coordinates);
     } catch (e) {
-        console.error("unable to fetch coordinates for query")
+        console.error(`unable to fetch coordinates for query - ${e}`);
     }
 };
 </script>

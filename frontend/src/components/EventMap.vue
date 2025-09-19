@@ -2,10 +2,10 @@
 import 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { LMap, LTileLayer, LMarker } from '@vue-leaflet/vue-leaflet';
-import { computed, nextTick, ref, watch } from 'vue';
+import { nextTick, ref, watch } from 'vue';
 import type { PropType } from 'vue';
 
-import { Point, type LatLngExpression, type PointExpression, type PointTuple } from 'leaflet'
+import { type LatLngExpression, type PointExpression, type PointTuple } from 'leaflet'
 
 
 const props = defineProps({
