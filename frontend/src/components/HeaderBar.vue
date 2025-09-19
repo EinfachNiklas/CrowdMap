@@ -14,7 +14,7 @@ const displayLocations = async (query: string) => {
         return;
     }
     try {
-        const res = await fetchFromAPI(`/api/geocoding/coordinates/query?query=${query}`, { method: "GET" });
+        const res = await fetchFromAPI(`/api/geocoding/coordinates/query?query=${encodeURIComponent(query)}`, { method: "GET" });
         const coordinates = await res.json() as { lat: number; lon: number };
         emit('coordinatesResult', coordinates);
     } catch (e) {

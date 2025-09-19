@@ -21,7 +21,7 @@ watch(
     () => [props.center, props.centerVersion],
     async () => {
         const c = props.center;
-        if (!c || !c[0] || !c[1]) {
+        if (!c || c.length < 2 || !Number.isFinite(c[0]) || !Number.isFinite(c[1])) {
             return;
         }
         const d = (n: number) => (n.toString().split('.')[1] ?? '').length;

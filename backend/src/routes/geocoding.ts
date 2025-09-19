@@ -41,7 +41,11 @@ router.get("/geocoding/coordinates/ip", async (req, res) => {
     const controller = new AbortController();
     const t = setTimeout(() => controller.abort(), 5000);
     try {
-        const geores = await fetch(`https://api.geoapify.com/v1/ipinfo?${isProd ? "ip=" + ip : ""}&apiKey=${GEOAPIFY_API_KEY}`, {
+        const url = new URL('https://api.geoapify.com/v1/ipinfo');
+        const params = new URLSearchParams({ apiKey: GEOAPIFY_API_KEY });
+        if (isProd && ip) params.append('ip', ip);
+        url.search = params.toString();
+        const geores = await fetch(url, {
             method: "GET",
             signal: controller.signal
         })

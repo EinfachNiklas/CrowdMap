@@ -10,6 +10,7 @@ import cookieParser from 'cookie-parser';
 
 const server = express();
 const port: number = parseInt(process.env.PORT ?? '', 10) || 4000;
+server.set('trust proxy', 1);
 server.use(express.json());
 server.use(cookieParser());
 server.use(cors({
@@ -24,7 +25,6 @@ server.use("/", authRouter);
 server.use("/", swaggerRouter);
 server.use("/", geocodingRouter);
 
-server.set('trust proxy', 1);
 
 server.listen(port, () => {
   console.log(`Volume Server started on port ${port} ...`);
