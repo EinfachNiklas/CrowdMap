@@ -7,7 +7,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 
 
-const emit = defineEmits<{ (e: 'coordinatesResult', value: { lat: number, lon: number }): void }>();
+const emit = defineEmits<{ (e: 'coordinates-result', value: { lat: number, lon: number }): void }>();
 
 const displayLocations = async (query: string) => {
     if (query.length < 3) {
@@ -16,7 +16,7 @@ const displayLocations = async (query: string) => {
     try {
         const res = await fetchFromAPI(`/api/geocoding/coordinates/query?query=${encodeURIComponent(query)}`, { method: "GET" });
         const coordinates = await res.json() as { lat: number; lon: number };
-        emit('coordinatesResult', coordinates);
+        emit('coordinates-result', coordinates);
     } catch (e) {
         console.error(`unable to fetch coordinates for query - ${e}`);
     }
