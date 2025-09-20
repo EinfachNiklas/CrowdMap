@@ -14,26 +14,36 @@ What things you need to install the software and how to install them
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+This is a step by step guide that will tell you how to get a development env running.
 
-Install the node deps. Go to the root directory and run
+Run the setup script: In the root directory run
+```bash
+npm run setup-initial
 ```
-npm i
-npm i --prefix frontend/
-npm i --prefix backend/
-```
+This will install all required dependencies to run the application and create a copy of the files ```.env.example``` named ```.env``` in the directories ```/backend/``` and ```/frontend/``` to configure your environment variables. 
 
-Define environment variables: Go to ```/backend/``` and ```/frontend/```. Do the following steps in both directories. 
-1. Create a copy of the file ```.env.example``` and rename it to ```.env``` 
-2. Define the variables to your liking (Have a look [here](#environment-variables) for further information about each variable) 
+Open both of these ```.env``` files and define the variables to your liking. (Have a look [here](#environment-variables) for further information about each variable) 
 
-Now you can open one terminal in each directories (```/backend/``` and ```/frontend/```) and start a dev server with the following command:
 
-```
+Now you can either 
+- open one terminal in each directory (```/backend/``` and ```/frontend/```) and start a **dev server** with the following command:
+
+```bash
 npm run dev
 ```
 
-After that, you can open a browser and connect to ```http://localhost:YOUR_FRONTEND_PORT``` to see the frontend running.
+or
+
+
+- open two terminals in the root directory and start a **preview server** with running each of the following commands in one terminal:
+
+```bash
+npm run start:backend
+npm run start:frontend
+```
+
+
+After that, you can open a browser and connect to ```http://localhost:PORT_DEV``` or ```http://localhost:PORT_PREVIEW``` to see the frontend running.
 You can also access ```http://localhost:YOUR_BACKEND_PORT/api-docs``` for a [swagger](https://swagger.io/) documentation for the backend API.
 ## Running the tests
 
@@ -53,7 +63,7 @@ To be done
 
 ### Static Code Checks
 Static Code Checks are implemented via eslint. To execute them, simply run 
-```
+```bash
 npm run lint 
 ```
 in either of the directories ```/backend/``` and ```/frontend/```.
@@ -79,17 +89,21 @@ Copy `/frontend/.env.example` to `/frontend/.env` and change the values:
 | Variable              | Description                            | Default                 |
 | --------------------- | -------------------------------------- | ----------------------- |
 | `VITE_BACKEND_ORIGIN` | Backend Origin on same device for vite | `http://localhost:4000` |
+| `VITE_PORT_DEV`            | Port for Frontend Dev Server           | `5173`                  |
+| `VITE_PORT_PREVIEW`        | Port for Frontend Preview Server       | `4173`                  |
 
 
 #### Backend
 Copy `/backend/.env.example` to `/backend/.env` and change the values:
 
-| Variable            | Description                | Default |
-| ------------------- | -------------------------- | ------- |
-| `PORT`              | Port for Backend Server    | `4000`  |
-| `JWT_SECRET`        | Secret for jsonwebtoken    | `none`  |
-| `AUTH_TOKEN_TTL`    | Auth Token Time to Live    | `"10m"` |
-| `REFRESH_TOKEN_TTL` | Refresh Token Time to Live | `"7d"`  |
+| Variable            | Description                                   | Default |
+| ------------------- | --------------------------------------------- | ------- |
+| `PORT`              | Port for Backend Server                       | `4000`  |
+| `JWT_SECRET`        | Secret for jsonwebtoken                       | `none`  |
+| `AUTH_TOKEN_TTL`    | Auth Token Time to Live                       | `"10m"` |
+| `REFRESH_TOKEN_TTL` | Refresh Token Time to Live                    | `"7d"`  |
+| `GEOAPIFY_API_KEY`  | [Geoapify](https://www.geoapify.com/) API Key | `none`  |
+
 
 
 ## Contributing

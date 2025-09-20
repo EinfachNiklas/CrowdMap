@@ -21,10 +21,9 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      port: 5173,
+      port: parseInt(env.VITE_PORT_DEV) || 5173,
       strictPort: true,
       proxy: {
-        // Alle Requests, die mit /api beginnen, an dein Backend weiterleiten
         '/api': {
           target: env.VITE_BACKEND_ORIGIN || 'http://localhost:4000',
           changeOrigin: true,
@@ -33,8 +32,15 @@ export default defineConfig(({ mode }) => {
       }
     },
     preview: {
-      port: 4173,
-      strictPort: true
+      port: parseInt(env.VITE_PORT_PREVIEW) ||4173,
+      strictPort: true,
+      proxy: {
+        '/api': {
+          target: env.VITE_BACKEND_ORIGIN || 'http://localhost:4000',
+          changeOrigin: true,
+          rewrite: (p) => p.replace(/^\/api/, '')
+        }
+      }
     }
   };
 });
