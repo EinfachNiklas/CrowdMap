@@ -104,7 +104,10 @@ Copy `/backend/.env.example` to `/backend/.env` and change the values:
 | `REFRESH_TOKEN_TTL` | Refresh Token Time to Live                    | `"7d"`  |
 | `GEOAPIFY_API_KEY`  | [Geoapify](https://www.geoapify.com/) API Key | `none`  |
 
+### DB Schema
+The Backend DB follows this ER-Diagram
 
+![backend_er](./docs/ER/backend_er.png)
 
 ## Contributing
 
