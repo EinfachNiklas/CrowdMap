@@ -1,0 +1,27 @@
+@startuml
+skinparam linetype ortho
+skinparam dpi 200
+skinparam Ranksep 100
+skinparam Nodesep 40
+hide circle
+
+entity "users" as users {
+  + id : INTEGER {PK, AUTOINCREMENT}
+  --
+  username : VARCHAR(64) {UNIQUE, NOT NULL}
+  email    : VARCHAR(255) {UNIQUE, NOT NULL}
+  pwdhash  : VARCHAR(255) {NOT NULL}
+  createdAt: DATETIME {NOT NULL, DEFAULT: CURRENT_TIMESTAMP}
+}
+
+entity "refreshTokenSessions" as rts {
+  + userId   : INTEGER {PK, FK -> users.id, NOT NULL}
+  --
+  jtiHash   : TEXT {NOT NULL}
+  expiresAt : DATETIME {NOT NULL}
+  createdAt : DATETIME {NOT NULL, DEFAULT: CURRENT_TIMESTAMP}
+}
+
+
+users "1" -- "0..1" rts: "users.id = rts.userId"
+@enduml
