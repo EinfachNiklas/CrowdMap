@@ -45,5 +45,6 @@ watch(
                 attribution="&copy; OpenStreetMap contributors" />
             <l-marker v-for="(markerPos, i) in markerPositions" :lat-lng="markerPos" v-bind:key="i" />
         </l-map>
+        <span class="absolute z-[400] bottom-0 left-0 text-xs">Powered by <a href="https://www.geoapify.com/">Geoapify</a></span>
     </div>
 </template>
