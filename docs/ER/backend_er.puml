@@ -23,7 +23,7 @@ createdAt : DATETIME {NOT NULL, DEFAULT: CURRENT_TIMESTAMP}
 }
 
 entity "crowdEvents" as crowdEvents {
-+ crowdEventId : INTEGER {PK, AUTOINCREMENT}
++ crowdEventId : BLOB {PK, NOT NULL}
 --
 title : VARCHAR(64) {NOT NULL}
 lat : DECIMAL(8,6) {NOT NULL}
