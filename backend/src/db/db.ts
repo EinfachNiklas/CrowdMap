@@ -35,6 +35,8 @@ db.exec(`
         lon DECIMAL(9,6) NOT NULL,
         createdBy INTEGER NOT NULL,
         createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CHECK (lat BETWEEN -90 AND 90),
+        CHECK (lon BETWEEN -180 AND 180),
         FOREIGN KEY(createdBy) REFERENCES users(id) ON DELETE CASCADE
     )
     `);
