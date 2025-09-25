@@ -566,6 +566,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Message"
+        "409":
+          description: this voting already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         "500":
           description: Internal server error
           content:
@@ -601,6 +607,12 @@ paths:
                 $ref: "#/components/schemas/Message"
         "404":
           description: no entry found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "409":
+          description: this voting already exists
           content:
             application/json:
               schema:
