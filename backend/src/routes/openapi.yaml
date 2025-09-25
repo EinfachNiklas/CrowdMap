@@ -98,6 +98,33 @@ components:
           type: number
       required: [lat, lon]
       additionalProperties: false
+    CrowdEventPostBody:
+      type: object
+      properties:
+        title:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+      required: [title, lat, lon]
+      additionalProperties: false
+    CrowdEvent:
+      type: object
+      properties:
+        crowdEventId:
+          type: string
+          format: uuid
+        title:
+          type: string
+        lat:
+          type: number
+        lon:
+          type: number
+        createdBy:
+          type: integer
+      required: [crowdEventId, title, lat, lon, createdBy]
+      additionalProperties: false
 
 paths:
   /users:
@@ -383,6 +410,161 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/GeocodingCoordinatesResponse"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /crowdEvents:
+    post:
+      tags: [CrowdEvents]
+      deprecated: false
+      description: Creates a new crowd event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CrowdEventPostBody"
+      responses:
+        "201":
+          description: CrowdEvent created successfully
+          headers:
+            Location:
+              description: URL of created event
+              schema:
+                type: string
+                format: uri
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CrowdEvent"
+        "400":
+          description: Missing fields or invalid types
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  /crowdEvents/{id}:
+    get:
+      tags: [CrowdEvents]
+      deprecated: false
+      description: Retrieves a crowd event by id
+      security: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: CrowdEvent ID
+      responses:
+        "200":
+          description: Entry found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CrowdEvent"
+        "404":
+          description: no entry found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  /crowdEvents/{id}/upvote:
+    post:
+      tags: [CrowdEvents]
+      deprecated: false
+      description: Adds an upvote to a crowd event
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: CrowdEvent ID
+      responses:
+        "200":
+          description: Vote stored
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "404":
+          description: no entry found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+  /crowdEvents/{id}/downvote:
+    post:
+      tags: [CrowdEvents]
+      deprecated: false
+      description: Adds a downvote to a crowd event
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: CrowdEvent ID
+      responses:
+        "200":
+          description: Vote stored
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "404":
+          description: no entry found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         "500":
           description: Internal server error
           content:

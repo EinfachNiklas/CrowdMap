@@ -10,16 +10,17 @@ export default class Authentication {
 
   static authenticate(req: Request, res: Response, next: NextFunction) {
     if (req.method === 'OPTIONS') return next();
+    const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
     const isPublic =
       (req.path === '/users' && req.method === 'POST') ||
       req.path === '/users/availability' ||
       req.path === '/auth/login' ||
       req.path === '/auth/refresh' ||
       (process.env.NODE_ENV !== 'production' &&
-        (req.path === '/api-docs' || req.path.startsWith('/api-docs/'))) ||
+      (req.path === '/api-docs' || req.path.startsWith('/api-docs/'))) ||
       req.path === '/geocoding/coordinates/query' ||
-      req.path === '/geocoding/coordinates/ip';
-
+      req.path === '/geocoding/coordinates/ip' ||
+      (req.method === 'GET' && uuidRegex.test(req.path.split("/crowdEvents/")[1]));
     if (isPublic) return next();
     const h = req.headers.authorization ?? "";
     if (!h.startsWith('Bearer ')) {
@@ -38,7 +39,7 @@ export default class Authentication {
     if (!h.startsWith('Bearer ')) return undefined;
     try {
       const decoded = jwt.verify(h.slice(7), jwtSecret) as JwtPayload | string;
-      return typeof decoded === 'string' ? decoded : decoded.sub?.toString();
+      return typeof decoded === 'string' ? decoded : decoded["id"];
     } catch {
       return undefined;
     }
