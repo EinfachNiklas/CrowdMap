@@ -43,11 +43,12 @@ db.exec(`
 
 db.exec(`
     CREATE TABLE IF NOT EXISTS crowdEventVotings (
-        userid INTEGER PRIMARY KEY,
-        crowdEventId BLOB PRIMARY KEY,
+        userId INTEGER NOT NULL,
+        crowdEventId BLOB NOT NULL,
         isUpvote BOOLEAN NOT NULL,
-        FOREIGN KEY(userid) REFERENCES users(id) ON DELETE CASCADE
-        FOREIGN KEY(crowdEventId) REFERENCES crowdEvents(crowdEventId) ON DELETE CASCADE
+        FOREIGN KEY(userid) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY(crowdEventId) REFERENCES crowdEvents(crowdEventId) ON DELETE CASCADE,
+        PRIMARY KEY(userid, crowdEventId)
     )
     `);
 

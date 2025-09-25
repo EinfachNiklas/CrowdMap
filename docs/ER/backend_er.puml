@@ -33,7 +33,7 @@ createdAt : DATETIME {NOT NULL, DEFAULT: CURRENT_TIMESTAMP}
 }
 
 entity "crowdEventVotings" as cev {
-+ userid : INTEGER {FK -> users.id}
++ userId : INTEGER {FK -> users.id}
 + crowdEventId : BLOB {FK -> crowdEvents.crowdEventId}
 --
 isUpvote : BOOLEAN {NOT NULL}

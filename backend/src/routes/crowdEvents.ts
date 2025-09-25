@@ -19,35 +19,55 @@ interface CrowdEvent {
     createdBy: number;
 }
 
+interface CrowdEventVoting {
+    userId: number;
+    crowdEventId: Buffer;
+    isUpvote: boolean;
+}
+
 const router = express.Router();
 
 const insertCrowdEvent = db.prepare("INSERT INTO crowdEvents (crowdEventId, title, lat, lon, createdBy) VALUES (?,?,?,?,?)");
 const selectCrowdEvent = db.prepare("SELECT * FROM crowdEvents WHERE crowdEventId = ?")
-const insertCrowdEventVotings = db.prepare("INSERT INTO crowdEventVotings (userid, crowdEventId, isUpvote) VALUES (?,?,?)");
+const insertCrowdEventVotings = db.prepare("INSERT INTO crowdEventVotings (userId, crowdEventId, isUpvote) VALUES (?,?,?)");
+const selectCrowdEventVotings = db.prepare("SELECT * FROM crowdEventVotings WHERE userId = ? and crowdEventId = ?");
+const updateCrowdEventVotings = db.prepare("UPDATE crowdEventVotings SET isUpvote = ? WHERE userId = ? AND crowdEventId = ?");
+const deleteCrowdEventVotings = db.prepare("DELETE FROM crowdEventVotings WHERE userid = ? AND crowdEventId = ?");
 
 
-const handleVoting = (req: Request, res: Response, isUpvote: boolean) => {
-    const crowdEventId = req.params.id;
-    try {
-        const row = selectCrowdEvent.get(uuidParse(crowdEventId)) as CrowdEventBlob;
-        if (!row) {
-            return res.status(404).json({ message: 'no entry found', timestamp: new Date().toISOString() });
-        }
-        insertCrowdEventVotings.run(Authentication.getUserId(req), row.crowdEventId, isUpvote ? 1 : 0);
-        return res.status(200).json({});
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
-    }
-}
-
-function mapCrowdEvent(crowdEventBlob: CrowdEventBlob): CrowdEvent {
+const mapCrowdEvent = (crowdEventBlob: CrowdEventBlob): CrowdEvent => {
     return {
         crowdEventId: uuidStringify(crowdEventBlob.crowdEventId),
         title: crowdEventBlob.title,
         lat: crowdEventBlob.lat,
         lon: crowdEventBlob.lon,
         createdBy: crowdEventBlob.createdBy
+    }
+}
+
+
+const handleVoting = (req: Request, res: Response, isUpvote: boolean) => {
+    const crowdEventId = req.params.id;
+    const crowdEventIdBuffer = uuidParse(crowdEventId);
+    try {
+        const rowCrowdEvent = selectCrowdEvent.get(crowdEventIdBuffer) as CrowdEventBlob;
+        if (!rowCrowdEvent) {
+            return res.status(404).json({ message: 'no entry found', timestamp: new Date().toISOString() });
+        }
+        const userId = Authentication.getUserId(req)
+        const rowCrowdEventVoting = selectCrowdEventVotings.get(userId, crowdEventIdBuffer) as CrowdEventVoting;
+        if (!rowCrowdEventVoting) {
+            insertCrowdEventVotings.run(userId, crowdEventIdBuffer, isUpvote ? 1 : 0);
+            return res.status(200).json({});
+        }
+        if (rowCrowdEventVoting.isUpvote == isUpvote) {
+            return res.status(409).json({ message: 'this voting already exists', timestamp: new Date().toISOString() })
+        }
+        updateCrowdEventVotings.run(isUpvote ? 1 : 0, userId, crowdEventIdBuffer);
+        return res.status(200).json({});
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }
 }
 
@@ -86,12 +106,26 @@ router.get("/crowdEvents/:id", (req, res) => {
     }
 });
 
-router.post("/crowdEvents/:id/upvote", (req, res) => {
+router.post("/crowdEvents/:id/voting/up", (req, res) => {
     handleVoting(req, res, true);
 });
 
-router.post("/crowdEvents/:id/downvote", (req, res) => {
+router.post("/crowdEvents/:id/voting/down", (req, res) => {
     handleVoting(req, res, false);
+});
+
+router.delete("/crowdEvents/:id/voting", (req, res) => {
+    const crowdEventId = req.params.id;
+    try {
+        const deleteRes = deleteCrowdEventVotings.run(Authentication.getUserId(req), uuidParse(crowdEventId));
+        if (deleteRes.changes === 0) {
+            return res.status(404).json({ message: 'no entry found', timestamp: new Date().toISOString() });
+        }
+        return res.status(200).json({});
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
+    }
 });
 
 export default router;
