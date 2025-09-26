@@ -52,4 +52,10 @@ db.exec(`
     )
     `);
 
+
+db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_crowdEventVotings_crowdEventId
+        ON crowdEventVotings(crowdEventId)
+    `);
+
 export default db;

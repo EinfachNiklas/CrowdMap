@@ -33,7 +33,7 @@ const insertCrowdEventVotings = db.prepare("INSERT INTO crowdEventVotings (userI
 const selectCrowdEventVotings = db.prepare("SELECT * FROM crowdEventVotings WHERE userId = ? and crowdEventId = ?");
 const updateCrowdEventVotings = db.prepare("UPDATE crowdEventVotings SET isUpvote = ? WHERE userId = ? AND crowdEventId = ?");
 const deleteCrowdEventVotings = db.prepare("DELETE FROM crowdEventVotings WHERE userid = ? AND crowdEventId = ?");
-
+const selectCrowdEventVotingsCount = db.prepare("SELECT COUNT(*) AS totalCount, SUM(isUpvote = 0) as downvoteCount FROM crowdEventVotings WHERE crowdEventId = ?");
 
 const mapCrowdEvent = (crowdEventBlob: CrowdEventBlob): CrowdEvent => {
     return {
@@ -48,8 +48,8 @@ const mapCrowdEvent = (crowdEventBlob: CrowdEventBlob): CrowdEvent => {
 
 const handleVoting = (req: Request, res: Response, isUpvote: boolean) => {
     const crowdEventId = req.params.id;
-    const crowdEventIdBuffer = uuidParse(crowdEventId);
     try {
+        const crowdEventIdBuffer = uuidParse(crowdEventId);
         const rowCrowdEvent = selectCrowdEvent.get(crowdEventIdBuffer) as CrowdEventBlob;
         if (!rowCrowdEvent) {
             return res.status(404).json({ message: 'no entry found', timestamp: new Date().toISOString() });
@@ -66,6 +66,9 @@ const handleVoting = (req: Request, res: Response, isUpvote: boolean) => {
         updateCrowdEventVotings.run(isUpvote ? 1 : 0, userId, crowdEventIdBuffer);
         return res.status(200).json({});
     } catch (error) {
+        if (error instanceof Error && error.message === 'Invalid UUID string') {
+            return res.status(400).json({ message: 'invalid crowdEventId', timestamp: new Date().toISOString() });
+        }
         console.error(error);
         return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }
@@ -91,7 +94,6 @@ router.post("/crowdEvents", (req, res) => {
 });
 
 router.get("/crowdEvents/:id", (req, res) => {
-    console.log("a")
     const crowdEventId = req.params.id;
     try {
         const row = selectCrowdEvent.get(uuidParse(crowdEventId)) as CrowdEventBlob;
@@ -114,6 +116,21 @@ router.post("/crowdEvents/:id/voting/down", (req, res) => {
     handleVoting(req, res, false);
 });
 
+router.get("/crowdEvents/:id/voting", (req, res) => {
+    const crowdEventId = req.params.id;
+    try {
+        const votingsCount = selectCrowdEventVotingsCount.get(uuidParse(crowdEventId)) as { totalCount: number, downvoteCount: number };
+        console.log(votingsCount)
+        return res.status(200).json({ votingsCount: (votingsCount.totalCount - votingsCount.downvoteCount*2) });
+    } catch (error) {
+        if (error instanceof Error && error.message === 'Invalid UUID string') {
+            return res.status(400).json({ message: 'invalid crowdEventId', timestamp: new Date().toISOString() });
+        }
+        console.error(error);
+        return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
+    }
+});
+
 router.delete("/crowdEvents/:id/voting", (req, res) => {
     const crowdEventId = req.params.id;
     try {
@@ -123,6 +140,9 @@ router.delete("/crowdEvents/:id/voting", (req, res) => {
         }
         return res.status(200).json({});
     } catch (error) {
+        if (error instanceof Error && error.message === 'Invalid UUID string') {
+            return res.status(400).json({ message: 'invalid crowdEventId', timestamp: new Date().toISOString() });
+        }
         console.error(error);
         return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }

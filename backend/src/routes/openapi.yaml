@@ -125,6 +125,13 @@ components:
           type: integer
       required: [crowdEventId, title, lat, lon, createdBy]
       additionalProperties: false
+    CrowdEventVotingsCount:
+      type: object
+      properties:
+        votingsCount:
+          type: integer
+      required: [votingsCount]
+      additionalProperties: false
 
 paths:
   /users:
@@ -494,6 +501,38 @@ paths:
                 $ref: "#/components/schemas/Message"
 
   /crowdEvents/{id}/voting:
+    get:
+      tags: [CrowdEvents]
+      deprecated: false
+      description: Retrieves the voting count for a crowd event
+      security: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: CrowdEvent ID
+      responses:
+        "200":
+          description: Count returned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CrowdEventVotingsCount"
+        "400":
+          description: Invalid crowdEventId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+        "500":
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
     delete:
       tags: [CrowdEvents]
       deprecated: false
@@ -514,6 +553,12 @@ paths:
               schema:
                 type: object
                 additionalProperties: false
+        "400":
+          description: Invalid crowdEventId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         "401":
           description: Unauthorized
           content:
@@ -554,6 +599,12 @@ paths:
               schema:
                 type: object
                 additionalProperties: false
+        "400":
+          description: Invalid crowdEventId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         "401":
           description: Unauthorized
           content:
@@ -599,6 +650,12 @@ paths:
               schema:
                 type: object
                 additionalProperties: false
+        "400":
+          description: Invalid crowdEventId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         "401":
           description: Unauthorized
           content:
