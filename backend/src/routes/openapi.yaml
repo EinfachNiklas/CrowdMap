@@ -516,7 +516,7 @@ paths:
           description: CrowdEvent ID
       responses:
         "200":
-          description: Count returned
+          description: Votes returned
           content:
             application/json:
               schema:

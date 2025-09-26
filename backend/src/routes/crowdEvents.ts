@@ -32,7 +32,7 @@ const selectCrowdEvent = db.prepare("SELECT * FROM crowdEvents WHERE crowdEventI
 const insertCrowdEventVotings = db.prepare("INSERT INTO crowdEventVotings (userId, crowdEventId, isUpvote) VALUES (?,?,?)");
 const selectCrowdEventVotings = db.prepare("SELECT * FROM crowdEventVotings WHERE userId = ? and crowdEventId = ?");
 const updateCrowdEventVotings = db.prepare("UPDATE crowdEventVotings SET isUpvote = ? WHERE userId = ? AND crowdEventId = ?");
-const deleteCrowdEventVotings = db.prepare("DELETE FROM crowdEventVotings WHERE userid = ? AND crowdEventId = ?");
+const deleteCrowdEventVotings = db.prepare("DELETE FROM crowdEventVotings WHERE userId = ? AND crowdEventId = ?");
 const selectCrowdEventVotingsCount = db.prepare("SELECT COUNT(*) AS totalCount, SUM(isUpvote = 0) as downvoteCount FROM crowdEventVotings WHERE crowdEventId = ?");
 
 const mapCrowdEvent = (crowdEventBlob: CrowdEventBlob): CrowdEvent => {
@@ -80,13 +80,19 @@ router.post("/crowdEvents", (req, res) => {
     if (typeof title !== 'string' || typeof lat !== 'number' || typeof lon !== 'number') {
         return res.status(400).json({ message: 'invalid types', timestamp: new Date().toISOString() });
     }
-    const userid = Authentication.getUserId(req);
-    const uuid = uuidParse(crypto.randomUUID());
     try {
+        if (!title.trim() || title.length > 64) {
+            return res.status(400).json({ message: 'invalid title', timestamp: new Date().toISOString() });
+        }
+        if (lat < -90 || lat > 90 || lon < -180 || lon > 180) {
+            return res.status(400).json({ message: 'invalid coordinates', timestamp: new Date().toISOString() });
+        }
+        const uuid = uuidParse(crypto.randomUUID());
+        const userid = Authentication.getUserId(req);
         insertCrowdEvent.run(uuid, title, lat, lon, userid);
         const row: CrowdEventBlob = selectCrowdEvent.get(uuid) as CrowdEventBlob;
-        const ressource: CrowdEvent = mapCrowdEvent(row);
-        return res.status(201).location(`/crowdEvents/${uuidStringify(uuid)}`).json(ressource);
+        const resource: CrowdEvent = mapCrowdEvent(row);
+        return res.status(201).location(`/crowdEvents/${uuidStringify(uuid)}`).json(resource);
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
@@ -120,8 +126,7 @@ router.get("/crowdEvents/:id/voting", (req, res) => {
     const crowdEventId = req.params.id;
     try {
         const votingsCount = selectCrowdEventVotingsCount.get(uuidParse(crowdEventId)) as { totalCount: number, downvoteCount: number };
-        console.log(votingsCount)
-        return res.status(200).json({ votingsCount: (votingsCount.totalCount - votingsCount.downvoteCount*2) });
+        return res.status(200).json({ votingsCount: (votingsCount.totalCount - votingsCount.downvoteCount * 2) });
     } catch (error) {
         if (error instanceof Error && error.message === 'Invalid UUID string') {
             return res.status(400).json({ message: 'invalid crowdEventId', timestamp: new Date().toISOString() });
