@@ -109,6 +109,9 @@ router.get("/crowdEvents/:id", (req, res) => {
         const crowdEvent = mapCrowdEvent(row);
         return res.status(200).json(crowdEvent);
     } catch (error) {
+        if (error instanceof Error && error.message === 'Invalid UUID string') {
+            return res.status(400).json({ message: 'invalid crowdEventId', timestamp: new Date().toISOString() });
+        }
         console.error(error);
         return res.status(500).json({ message: 'internal_error', timestamp: new Date().toISOString() });
     }

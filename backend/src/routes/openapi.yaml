@@ -487,6 +487,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/CrowdEvent"
+        "400":
+          description: Invalid crowdEventId
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
         "404":
           description: no entry found
           content:
