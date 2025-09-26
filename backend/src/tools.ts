@@ -11,3 +11,15 @@ export function getClientIp(req: Request): string {
     const raw = req.socket.remoteAddress || '';
     return raw.startsWith('::ffff:') ? raw.slice(7) : raw;
 }
+
+export function uuidStringify(buf: Buffer): string {
+  const h = buf.toString("hex");
+  return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
+}
+
+export function uuidParse(str: string): Buffer {
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(str)) {
+    throw new Error("Invalid UUID string");
+  }
+  return Buffer.from(str.replace(/-/g, ""), "hex");
+}

@@ -5,6 +5,7 @@ import userRouter from './routes/users';
 import authRouter from './routes/auth';
 import swaggerRouter from './routes/swagger';
 import geocodingRouter from './routes/geocoding';
+import crowdEventRouter from './routes/crowdEvents';
 import Authentication from './authentication';
 import cookieParser from 'cookie-parser';
 
@@ -24,6 +25,7 @@ server.use("/", userRouter);
 server.use("/", authRouter);
 server.use("/", swaggerRouter);
 server.use("/", geocodingRouter);
+server.use("/", crowdEventRouter);
 
 
 server.listen(port, () => {

@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3';
 import path from 'path';
 import fs from 'fs';
-const dbPath = path.join(__dirname,"../../data/app.db");
+const dbPath = path.join(__dirname, "../../data/app.db");
 fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 const db = new Database(dbPath);
 db.pragma('journal_mode = WAL');
@@ -25,6 +25,37 @@ db.exec(`
         createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE
     )
+    `);
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS crowdEvents (
+        crowdEventId BLOB PRIMARY KEY NOT NULL,
+        title VARCHAR(64) NOT NULL,
+        lat DECIMAL(8,6) NOT NULL,
+        lon DECIMAL(9,6) NOT NULL,
+        createdBy INTEGER NOT NULL,
+        createdAt DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        CHECK (lat BETWEEN -90 AND 90),
+        CHECK (lon BETWEEN -180 AND 180),
+        FOREIGN KEY(createdBy) REFERENCES users(id) ON DELETE CASCADE
+    )
+    `);
+
+db.exec(`
+    CREATE TABLE IF NOT EXISTS crowdEventVotings (
+        userId INTEGER NOT NULL,
+        crowdEventId BLOB NOT NULL,
+        isUpvote BOOLEAN NOT NULL,
+        FOREIGN KEY(userId) REFERENCES users(id) ON DELETE CASCADE,
+        FOREIGN KEY(crowdEventId) REFERENCES crowdEvents(crowdEventId) ON DELETE CASCADE,
+        PRIMARY KEY(userId, crowdEventId)
+    )
+    `);
+
+
+db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_crowdEventVotings_crowdEventId
+        ON crowdEventVotings(crowdEventId)
     `);
 
 export default db;

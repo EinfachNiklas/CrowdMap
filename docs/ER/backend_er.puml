@@ -15,13 +15,33 @@ entity "users" as users {
 }
 
 entity "refreshTokenSessions" as rts {
-  + userId   : INTEGER {PK, FK -> users.id, NOT NULL}
-  --
-  jtiHash   : TEXT {NOT NULL}
-  expiresAt : DATETIME {NOT NULL}
-  createdAt : DATETIME {NOT NULL, DEFAULT: CURRENT_TIMESTAMP}
++ userId   : INTEGER {PK, FK -> users.id, NOT NULL}
+--
+jtiHash   : TEXT {NOT NULL}
+expiresAt : DATETIME {NOT NULL}
+createdAt : DATETIME {NOT NULL, DEFAULT: CURRENT_TIMESTAMP}
 }
 
+entity "crowdEvents" as crowdEvents {
++ crowdEventId : BLOB {PK, NOT NULL}
+--
+title : VARCHAR(64) {NOT NULL}
+lat : DECIMAL(8,6) {NOT NULL}
+lon : DECIMAL(9,6) {NOT NULL}
+createdBy : INTEGER {FK -> users.id, NOT NULL}
+createdAt : DATETIME {NOT NULL, DEFAULT: CURRENT_TIMESTAMP}
+}
 
-users "1" -- "0..1" rts: "users.id = rts.userId"
+entity "crowdEventVotings" as cev {
++ userId : INTEGER {FK -> users.id}
++ crowdEventId : BLOB {FK -> crowdEvents.crowdEventId}
+--
+isUpvote : BOOLEAN {NOT NULL}
+}
+
+users "1" -- "0..1" rts: "users.id = refreshTokenSessions.userId"
+users "1" -- "0..n" crowdEvents: "users.id = crowdEvents.createdBy"
+
+users "1" -- "0..n" cev: "users.id = crowdEventsVotings.userid"
+crowdEvents "1" -- "0..n" cev: "crowdEvents.crowdEventId = crowdEventsVotings.crowdEventId"
 @enduml
